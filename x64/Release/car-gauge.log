@@ -1,7 +1,0 @@
-﻿  test.cpp
-T:\Git\car-gauge\DxLib\DxLib.h(2819,1): warning C4819: The file contains a character that cannot be represented in the current code page (932). Save the file in Unicode format to prevent data loss
-  Generating code
-  Previous IPDB not found, fall back to full compilation.
-  All 1 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
-  Finished generating code
-  car-gauge.vcxproj -> T:\Git\car-gauge\x64\Release\car-gauge.exe

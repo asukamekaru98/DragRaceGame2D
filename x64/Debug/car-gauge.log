@@ -1,3 +1,0 @@
-﻿  test.cpp
-T:\Git\car-gauge\DxLib\DxLib.h(2819,1): warning C4819: The file contains a character that cannot be represented in the current code page (932). Save the file in Unicode format to prevent data loss
-  car-gauge.vcxproj -> T:\Git\car-gauge\x64\Debug\car-gauge.exe

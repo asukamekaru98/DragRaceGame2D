@@ -1,0 +1,53 @@
+# ---- Visual Studio / MSBuild build output ----
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww]in32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+ipch/
+
+# ---- Visual Studio working files ----
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ---- Build artifacts ----
+*.obj
+*.exe
+*.dll
+*.pdb
+*.ilk
+*.idb
+*.ipdb
+*.iobj
+*.exp
+*.map
+*.log
+*.tlog
+*.recipe
+*.lastbuildstate
+*.unsuccessfulbuild
+*.cache
+*.aps
+*.ncb
+*.sdf
+*.opensdf
+*.opendb
+*.VC.db
+*.VC.db-shm
+*.VC.db-wal
+*.VC.opendb
+*.vsidx
+
+# ---- Misc generated ----
+Log.txt
+
+# ---- Keep DxLib dependency (.lib/.h/.txt are required to build) ----
+!DxLib/
+!DxLib/**
