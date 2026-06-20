@@ -130,10 +130,38 @@
   <ItemGroup>
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\a.cpp" />
-    <ClCompile Include="header\typedef.h" />
+    <ClCompile Include="source\screen_manager.cpp" />
+    <ClCompile Include="source\input.cpp" />
+    <ClCompile Include="source\title_resource.cpp" />
+    <ClCompile Include="source\opening.cpp" />
+    <ClCompile Include="source\title.cpp" />
+    <ClCompile Include="source\garage.cpp" />
+    <ClCompile Include="source\debug.cpp" />
+    <ClCompile Include="source\game_data.cpp" />
+    <ClCompile Include="source\dealer.cpp" />
+    <ClCompile Include="source\customize.cpp" />
+    <ClCompile Include="source\game_screen.cpp" />
+    <ClCompile Include="source\car_data.cpp" />
+    <ClCompile Include="source\parts_data.cpp" />
+    <ClCompile Include="source\result.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\main.h" />
+    <ClInclude Include="header\typedef.h" />
+    <ClInclude Include="header\screen_manager.h" />
+    <ClInclude Include="header\input.h" />
+    <ClInclude Include="header\title_resource.h" />
+    <ClInclude Include="header\opening.h" />
+    <ClInclude Include="header\title.h" />
+    <ClInclude Include="header\garage.h" />
+    <ClInclude Include="header\debug.h" />
+    <ClInclude Include="header\parts_data.h" />
+    <ClInclude Include="header\game_data.h" />
+    <ClInclude Include="header\dealer.h" />
+    <ClInclude Include="header\customize.h" />
+    <ClInclude Include="header\game_screen.h" />
+    <ClInclude Include="header\car_data.h" />
+    <ClInclude Include="header\result.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
