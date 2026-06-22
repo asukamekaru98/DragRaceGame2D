@@ -130,6 +130,7 @@
   <ItemGroup>
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\a.cpp" />
+    <ClCompile Include="source\manager\resourceManager.cpp" />
     <ClCompile Include="source\screen_manager.cpp" />
     <ClCompile Include="source\input.cpp" />
     <ClCompile Include="source\title_resource.cpp" />
@@ -147,6 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\main.h" />
+    <ClInclude Include="header\resourceManager.h" />
     <ClInclude Include="header\typedef.h" />
     <ClInclude Include="header\screen_manager.h" />
     <ClInclude Include="header\input.h" />

@@ -32,9 +32,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     }
 
     InitGameData();
-    LoadTitleResource();
 
-# if 0
+    TitleResource titleResource;
+    titleResource.LoadResources();
+
+# if 1
     g_screen.update     = UpdateOpening;
     g_screen.draw       = DrawOpening;
     g_screen.nextUpdate = NULL;
@@ -64,7 +66,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         ScreenFlip();
     }
 
-    UnloadTitleResource();
+    titleResource.UnloadResources();
     DxLib_End();
     return 0;
 }

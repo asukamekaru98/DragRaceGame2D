@@ -1,19 +1,8 @@
-#include "../DxLib/DxLib.h"
+﻿#include "../DxLib/DxLib.h"
 #include "../header/title_resource.h"
 
+// タイトル/オープニングで共有する画像ハンドルの実体。
+// 読み込み・解放は TitleResource クラス（基底 ResourceManager）が行う。
 int g_hBg      = -1;
 int g_hShutter = -1;
 int g_hLogo    = -1;
-
-void LoadTitleResource(void) {
-    g_hBg      = LoadGraph("resource/title/tite_sprite1.png");
-    g_hShutter = LoadGraph("resource/title/tite_sprite2.png");
-    g_hLogo    = LoadGraph("resource/logo.png");
-}
-
-void UnloadTitleResource(void) {
-    DeleteGraph(g_hBg);
-    DeleteGraph(g_hShutter);
-    DeleteGraph(g_hLogo);
-    g_hBg = g_hShutter = g_hLogo = -1;
-}
