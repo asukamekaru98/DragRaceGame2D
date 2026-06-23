@@ -9,6 +9,16 @@
 #define SHUTTER_SPEED      8.0f
 #define BLINK_INTERVAL     30
 
+// Sprite cells inside tite_sprite2.png (g_hShutter)
+#define GARAGE_SRC_X       0
+#define GARAGE_SRC_Y       0
+#define GARAGE_WIDTH       674
+#define GARAGE_HEIGHT      376
+#define SHUTTER_SRC_X      0
+#define SHUTTER_SRC_Y      378
+#define SHUTTER_WIDTH      674
+#define SHUTTER_HEIGHT     378
+
 typedef enum {
     TITLE_STATE_WAIT,
     TITLE_STATE_SHUTTER_UP,
@@ -64,13 +74,20 @@ void DrawTitle(void) {
     int logoX = (800 - logoW) / 2;
     int logoY = (600 - logoH) / 2;
 
-    // Layer 1: garage background
-    DrawExtendGraph(0, 0, 800, 600, g_hBg, TRUE);
+    // Layer 1 (back): garage interior - sprite cell of tite_sprite2
+    DrawRectGraph(0, 0,
+        GARAGE_SRC_X, GARAGE_SRC_Y, GARAGE_WIDTH, GARAGE_HEIGHT,
+        g_hShutter, TRUE, FALSE);
 
-    // Layer 2: shutter (rises upward in SHUTTER_UP state)
-    DrawExtendGraph(0, (int)s_shutterY, 800, (int)s_shutterY + 600, g_hShutter, TRUE);
+    // Layer 2 (middle): shutter - sprite cell of tite_sprite2 (rises upward in SHUTTER_UP state)
+    DrawRectGraph(0, (int)s_shutterY,
+        SHUTTER_SRC_X, SHUTTER_SRC_Y, SHUTTER_WIDTH, SHUTTER_HEIGHT,
+        g_hShutter, TRUE, FALSE);
 
-    // Layer 3: logo (fully opaque)
+    // Layer 3 (front): full title image - tite_sprite1
+    DrawGraph(0, 0, g_hBg, TRUE);
+
+    // Layer 4: logo (fully opaque)
     DrawGraph(logoX, logoY, g_hLogo, TRUE);
 
     // "PRESS ANY KEY" blinking (WAIT state only)

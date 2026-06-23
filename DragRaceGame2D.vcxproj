@@ -23,7 +23,7 @@
     <ProjectGuid>{B7FE43BB-6897-4943-AA49-A828ECE78DA9}</ProjectGuid>
     <RootNamespace>GameProg</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>car-gauge</ProjectName>
+    <ProjectName>DragRaceGame2D</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
