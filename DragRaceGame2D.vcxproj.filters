@@ -18,6 +18,7 @@
     <ClCompile Include="source\parts_data.cpp" />
     <ClCompile Include="source\result.cpp" />
     <ClCompile Include="source\manager\resourceManager.cpp" />
+    <ClCompile Include="source\share.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\main.h" />
@@ -37,5 +38,7 @@
     <ClInclude Include="header\car_data.h" />
     <ClInclude Include="header\result.h" />
     <ClInclude Include="header\resourceManager.h" />
+    <ClInclude Include="header\const.h" />
+    <ClInclude Include="header\share.h" />
   </ItemGroup>
 </Project>

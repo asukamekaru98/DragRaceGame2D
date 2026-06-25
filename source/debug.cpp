@@ -1,4 +1,5 @@
 #include "../DxLib/DxLib.h"
+#include "../header/share.h"
 #include "../header/screen_manager.h"
 #include "../header/input.h"
 #include "../header/debug.h"
@@ -30,17 +31,17 @@ void UpdateDebugMenu(void) {
 }
 
 void DrawDebugMenu(void) {
-    DrawString(300, 150, "DXLIB SAMPLE", GetColor(255, 255, 0));
-    DrawLine(200, 200, 600, 200, GetColor(80, 80, 80));
+    DrawString(300, 150, "DXLIB SAMPLE", Color::YELLOW.Code());
+    DrawLine(200, 200, 600, 200, Color(80, 80, 80).Code());
 
     const char* items[] = { "Draw Sample", "Input Sample" };
     for (int i = 0; i < 2; i++) {
-        int col = (i == s_debugMenuIndex) ? GetColor(255, 255, 0) : GetColor(200, 200, 200);
+        int col = (i == s_debugMenuIndex) ? Color::YELLOW.Code() : Color(200, 200, 200).Code();
         DrawFormatString(320, 260 + i * 50, col, "%s %s",
                          (i == s_debugMenuIndex) ? ">" : " ", items[i]);
     }
 
-    DrawString(250, 520, "[Z/Enter] Select  [ESC] Back to Title", GetColor(150, 150, 150));
+    DrawString(250, 520, "[Z/Enter] Select  [ESC] Back to Title", Color(150, 150, 150).Code());
 }
 
 // ─────────────────────────────────────────
@@ -51,101 +52,101 @@ void DrawDebugMenu(void) {
 static int s_drawPage = 0;
 
 static void DrawPageBasic(void) {
-    int white = GetColor(255, 255, 255);
+    int white = Color::WHITE.Code();
     int y = 70;
 
     // DrawPixel
     DrawString(40, y, "DrawPixel", white);
     for (int i = 0; i < 8; i++)
-        DrawPixel(60 + i * 4, y + 45 + (i % 3), GetColor(255, 100, 100));
+        DrawPixel(60 + i * 4, y + 45 + (i % 3), Color(255, 100, 100).Code());
 
     // DrawLine
     DrawString(200, y, "DrawLine", white);
-    DrawLine(210, y + 30, 310, y + 65, GetColor(100, 255, 100));
+    DrawLine(210, y + 30, 310, y + 65, Color(100, 255, 100).Code());
 
     // DrawBox
     DrawString(380, y, "DrawBox", white);
-    DrawBox(385, y + 30, 490, y + 65, GetColor(100, 180, 255), FALSE);
+    DrawBox(385, y + 30, 490, y + 65, Color(100, 180, 255).Code(), FALSE);
 
     // DrawCircle
     DrawString(550, y, "DrawCircle", white);
-    DrawCircle(590, y + 48, 28, GetColor(255, 200, 0), FALSE);
+    DrawCircle(590, y + 48, 28, Color(255, 200, 0).Code(), FALSE);
 
     y += 130;
 
     // DrawOval
     DrawString(40, y, "DrawOval", white);
-    DrawOval(100, y + 45, 55, 25, GetColor(200, 100, 255), FALSE);
+    DrawOval(100, y + 45, 55, 25, Color(200, 100, 255).Code(), FALSE);
 
     // DrawTriangle
     DrawString(240, y, "DrawTriangle", white);
-    DrawTriangle(260, y + 70, 310, y + 20, 360, y + 70, GetColor(0, 220, 200), FALSE);
+    DrawTriangle(260, y + 70, 310, y + 20, 360, y + 70, Color(0, 220, 200).Code(), FALSE);
 
     // DrawQuadrangle
     DrawString(420, y, "DrawQuadrangle", white);
     DrawQuadrangle(430, y + 70, 470, y + 20, 540, y + 35, 520, y + 70,
-                   GetColor(255, 150, 0), FALSE);
+                   Color(255, 150, 0).Code(), FALSE);
 
     y += 130;
 
     // DrawRoundRect
     DrawString(40, y, "DrawRoundRect", white);
-    DrawRoundRect(50, y + 25, 210, y + 70, 15, 15, GetColor(150, 255, 150), FALSE);
+    DrawRoundRect(50, y + 25, 210, y + 70, 15, 15, Color(150, 255, 150).Code(), FALSE);
 }
 
 static void DrawPageFill(void) {
-    int white = GetColor(255, 255, 255);
+    int white = Color::WHITE.Code();
     int y = 70;
 
     DrawString(40,  y, "DrawBox (fill)",        white);
-    DrawBox(40, y + 30, 180, y + 75, GetColor(100, 180, 255), TRUE);
+    DrawBox(40, y + 30, 180, y + 75, Color(100, 180, 255).Code(), TRUE);
 
     DrawString(240, y, "DrawCircle (fill)",      white);
-    DrawCircle(295, y + 52, 30, GetColor(255, 200, 0), TRUE);
+    DrawCircle(295, y + 52, 30, Color(255, 200, 0).Code(), TRUE);
 
     DrawString(420, y, "DrawOval (fill)",        white);
-    DrawOval(505, y + 52, 55, 25, GetColor(200, 100, 255), TRUE);
+    DrawOval(505, y + 52, 55, 25, Color(200, 100, 255).Code(), TRUE);
 
     y += 140;
 
     DrawString(40,  y, "DrawTriangle (fill)",    white);
-    DrawTriangle(60, y + 70, 130, y + 20, 200, y + 70, GetColor(0, 220, 200), TRUE);
+    DrawTriangle(60, y + 70, 130, y + 20, 200, y + 70, Color(0, 220, 200).Code(), TRUE);
 
     DrawString(270, y, "DrawQuadrangle (fill)",  white);
     DrawQuadrangle(280, y + 70, 330, y + 20, 410, y + 38, 390, y + 70,
-                   GetColor(255, 150, 0), TRUE);
+                   Color(255, 150, 0).Code(), TRUE);
 
     DrawString(490, y, "DrawRoundRect (fill)",   white);
-    DrawRoundRect(500, y + 25, 660, y + 70, 15, 15, GetColor(150, 255, 150), TRUE);
+    DrawRoundRect(500, y + 25, 660, y + 70, 15, 15, Color(150, 255, 150).Code(), TRUE);
 }
 
 static void DrawPageString(void) {
-    int white = GetColor(255, 255, 255);
+    int white = Color::WHITE.Code();
     int y = 70;
 
     DrawString(30, y, "DrawString", white);
-    DrawString(30, y + 30, "Hello, DxLib!", GetColor(255, 255, 0));
+    DrawString(30, y + 30, "Hello, DxLib!", Color::YELLOW.Code());
 
     y += 90;
     DrawString(30, y, "DrawFormatString", white);
-    DrawFormatString(30, y + 30, GetColor(100, 255, 100),
+    DrawFormatString(30, y + 30, Color(100, 255, 100).Code(),
                      "int=%d  float=%.3f  hex=0x%X", 42, 3.14159f, 255);
 
     y += 90;
     DrawString(30, y, "GetDrawStringWidth", white);
     const char* sample = "SAMPLE TEXT";
     int w = GetDrawStringWidth(sample, (int)strlen(sample));
-    DrawFormatString(30, y + 30, GetColor(255, 200, 0), "\"%s\"  width=%dpx", sample, w);
-    DrawBox(30, y + 58, 30 + w, y + 64, GetColor(255, 100, 100), TRUE);
+    DrawFormatString(30, y + 30, Color(255, 200, 0).Code(), "\"%s\"  width=%dpx", sample, w);
+    DrawBox(30, y + 58, 30 + w, y + 64, Color(255, 100, 100).Code(), TRUE);
 
     y += 100;
     DrawString(30, y, "Color variations", white);
     int colors[] = {
-        GetColor(255,   0,   0),
-        GetColor(  0, 255,   0),
-        GetColor(  0,   0, 255),
-        GetColor(255, 255,   0),
-        GetColor(255,   0, 255),
+        Color::RED.Code(),
+        Color::GREEN.Code(),
+        Color::BLUE.Code(),
+        Color::YELLOW.Code(),
+        Color::MAGENTA.Code(),
     };
     const char* labels[] = { "RED", "GREEN", "BLUE", "YELLOW", "MAGENTA" };
     for (int i = 0; i < 5; i++) {
@@ -155,7 +156,7 @@ static void DrawPageString(void) {
 
 static void DrawPageBlend(void) {
     // Colored background to make blend effects visible
-    DrawFillBox(0, 50, 800, 450, GetColor(20, 50, 100));
+    DrawFillBox(0, 50, 800, 450, Color(20, 50, 100).Code());
 
     typedef struct { int mode; const char* name; } BlendEntry;
     BlendEntry blends[] = {
@@ -170,15 +171,15 @@ static void DrawPageBlend(void) {
     for (int i = 0; i < count; i++) {
         int x = 30 + i * 150;
         int y = 70;
-        DrawString(x, y, blends[i].name, GetColor(255, 255, 255));
+        DrawString(x, y, blends[i].name, Color::WHITE.Code());
 
         SetDrawBlendMode(blends[i].mode, 180);
-        DrawFillBox(x, y + 25, x + 120, y + 135, GetColor(255, 100, 0));
-        DrawCircle(x + 60, y + 195, 45, GetColor(0, 200, 255), TRUE);
+        DrawFillBox(x, y + 25, x + 120, y + 135, Color(255, 100, 0).Code());
+        DrawCircle(x + 60, y + 195, 45, Color(0, 200, 255).Code(), TRUE);
         SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
     }
 
-    DrawString(20, 420, "alpha=180 applied to each mode", GetColor(160, 160, 160));
+    DrawString(20, 420, "alpha=180 applied to each mode", Color(160, 160, 160).Code());
 }
 
 void UpdateDebugDraw(void) {
@@ -201,10 +202,10 @@ void DrawDebugDraw(void) {
         "Blend Modes",
     };
 
-    DrawFormatString(10, 10, GetColor(255, 255, 0),
+    DrawFormatString(10, 10, Color::YELLOW.Code(),
                      "Draw Sample  [</>] Page  [ESC] Back  (%d/%d) %s",
                      s_drawPage + 1, DRAW_PAGE_COUNT, pageNames[s_drawPage]);
-    DrawLine(0, 35, 800, 35, GetColor(80, 80, 80));
+    DrawLine(0, 35, 800, 35, Color(80, 80, 80).Code());
 
     switch (s_drawPage) {
     case 0: DrawPageBasic();  break;
@@ -263,57 +264,57 @@ void UpdateDebugInput(void) {
 }
 
 void DrawDebugInput(void) {
-    DrawString(10, 10, "Input Sample  [ESC] Back", GetColor(255, 255, 0));
-    DrawLine(0,   35, 800,  35, GetColor(80, 80, 80));
-    DrawLine(400, 35, 400, 590, GetColor(80, 80, 80));
+    DrawString(10, 10, "Input Sample  [ESC] Back", Color::YELLOW.Code());
+    DrawLine(0,   35, 800,  35, Color(80, 80, 80).Code());
+    DrawLine(400, 35, 400, 590, Color(80, 80, 80).Code());
 
     // ── Left: Keyboard ──────────────────────────────
-    DrawString(30, 45, "Keyboard", GetColor(200, 200, 200));
+    DrawString(30, 45, "Keyboard", Color(200, 200, 200).Code());
 
     for (int i = 0; i < KEY_LIST_COUNT; i++) {
         int isOn = IsKeyPressed(KEY_LIST[i].keyCode);
-        int col  = isOn ? GetColor(255, 255, 0) : GetColor(160, 160, 160);
+        int col  = isOn ? Color::YELLOW.Code() : Color(160, 160, 160).Code();
         DrawFormatString(30, 70 + i * 26, col, "%s : %s",
                          KEY_LIST[i].label, isOn ? "[ON] " : "[   ]");
     }
 
-    DrawString(30, 375, "Last triggered:", GetColor(200, 200, 200));
+    DrawString(30, 375, "Last triggered:", Color(200, 200, 200).Code());
     if (s_lastKeyIndex >= 0) {
-        DrawString(30, 398, KEY_LIST[s_lastKeyIndex].label, GetColor(255, 220, 0));
+        DrawString(30, 398, KEY_LIST[s_lastKeyIndex].label, Color(255, 220, 0).Code());
     } else {
-        DrawString(30, 398, "---", GetColor(100, 100, 100));
+        DrawString(30, 398, "---", Color(100, 100, 100).Code());
     }
 
     // ── Right: Controller ───────────────────────────
-    DrawString(420, 45, "Controller (PAD1)", GetColor(200, 200, 200));
+    DrawString(420, 45, "Controller (PAD1)", Color(200, 200, 200).Code());
 
     int padInput    = GetJoypadInputState(DX_INPUT_PAD1);
     int isConnected = (GetJoypadNum() > 0);
 
     for (int i = 0; i < PAD_LIST_COUNT; i++) {
         int isOn = isConnected && (padInput & PAD_LIST[i].padBit);
-        int col  = isOn ? GetColor(255, 255, 0) : GetColor(160, 160, 160);
+        int col  = isOn ? Color::YELLOW.Code() : Color(160, 160, 160).Code();
         DrawFormatString(420, 70 + i * 26, col, "%s : %s",
                          PAD_LIST[i].label, isOn ? "[ON] " : "[   ]");
     }
 
     // Analog sticks
-    DrawString(420, 295, "Analog Stick", GetColor(200, 200, 200));
+    DrawString(420, 295, "Analog Stick", Color(200, 200, 200).Code());
     if (isConnected) {
         int lx = 0, ly = 0, rx = 0, ry = 0;
         GetJoypadAnalogInput(&lx, &ly, DX_INPUT_PAD1);
         //GetJoypadAnalogInput2(&rx, &ry, DX_INPUT_PAD1);
-        DrawFormatString(420, 318, GetColor(255, 255, 255),
+        DrawFormatString(420, 318, Color::WHITE.Code(),
                          "Left  X:%+6.3f  Y:%+6.3f", lx / 1000.0f, ly / 1000.0f);
-        //DrawFormatString(420, 341, GetColor(255, 255, 255),
+        //DrawFormatString(420, 341, Color::WHITE.Code(),
         //                 "Right X:%+6.3f  Y:%+6.3f", rx / 1000.0f, ry / 1000.0f);
     } else {
-        DrawString(420, 318, "N/A (not connected)", GetColor(100, 100, 100));
+        DrawString(420, 318, "N/A (not connected)", Color(100, 100, 100).Code());
     }
 
     // Connection status
     DrawFormatString(420, 390,
-                     isConnected ? GetColor(100, 255, 100) : GetColor(255, 100, 100),
+                     isConnected ? Color(100, 255, 100).Code() : Color(255, 100, 100).Code(),
                      "Status: %s", isConnected ? "Connected" : "Not connected");
 }
 

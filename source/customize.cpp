@@ -1,4 +1,5 @@
 #include "../DxLib/DxLib.h"
+#include "../header/share.h"
 #include "../header/screen_manager.h"
 #include "../header/input.h"
 #include "../header/game_data.h"
@@ -115,53 +116,53 @@ static void DrawStatBar(SI_4 x, SI_4 y, const char* label,
     if (curW > BAR_MAX_W) curW = BAR_MAX_W;
     if (preW > BAR_MAX_W) preW = BAR_MAX_W;
 
-    DrawString(x, y, label, GetColor(200, 200, 200));
+    DrawString(x, y, label, Color(200, 200, 200).Code());
 
     SI_4 bx = x + 90;
 
     // Background track
-    DrawFillBox(bx, y + 1, bx + BAR_MAX_W, y + BAR_H - 1, GetColor(50, 50, 50));
+    DrawFillBox(bx, y + 1, bx + BAR_MAX_W, y + BAR_H - 1, Color(50, 50, 50).Code());
 
     // Current value (white)
     if (curW > 0)
-        DrawFillBox(bx, y + 1, bx + curW, y + BAR_H - 1, GetColor(180, 180, 180));
+        DrawFillBox(bx, y + 1, bx + curW, y + BAR_H - 1, Color(180, 180, 180).Code());
 
     // Preview delta
     if (preW > curW) {
         // increase: yellow
-        DrawFillBox(bx + curW, y + 1, bx + preW, y + BAR_H - 1, GetColor(255, 220, 0));
+        DrawFillBox(bx + curW, y + 1, bx + preW, y + BAR_H - 1, Color(255, 220, 0).Code());
     } else if (preW < curW) {
         // decrease: red mark over lost portion
-        DrawFillBox(bx + preW, y + 1, bx + curW, y + BAR_H - 1, GetColor(200, 60, 60));
+        DrawFillBox(bx + preW, y + 1, bx + curW, y + BAR_H - 1, Color(200, 60, 60).Code());
     }
 
     // Bar outline
-    DrawBox(bx, y, bx + BAR_MAX_W, y + BAR_H, GetColor(100, 100, 100), FALSE);
+    DrawBox(bx, y, bx + BAR_MAX_W, y + BAR_H, Color(100, 100, 100).Code(), FALSE);
 
     // Values
     if (pre != cur) {
-        SI_4 deltaCol = (pre > cur) ? GetColor(255, 220, 0) : GetColor(255, 80, 80);
-        DrawFormatString(bx + BAR_MAX_W + 6, y, GetColor(200, 200, 200),
+        SI_4 deltaCol = (pre > cur) ? Color(255, 220, 0).Code() : Color(255, 80, 80).Code();
+        DrawFormatString(bx + BAR_MAX_W + 6, y, Color(200, 200, 200).Code(),
                          "%.0f", cur);
         DrawFormatString(bx + BAR_MAX_W + 46, y, deltaCol,
                          "-> %.0f", pre);
     } else {
-        DrawFormatString(bx + BAR_MAX_W + 6, y, GetColor(200, 200, 200),
+        DrawFormatString(bx + BAR_MAX_W + 6, y, Color(200, 200, 200).Code(),
                          "%.0f", cur);
     }
 }
 
 static void DrawCarPlaceholder(SI_4 x, SI_4 y, SI_4 w, SI_4 h, const char* name) {
-    DrawFillBox(x, y, x + w, y + h, GetColor(30, 35, 50));
-    DrawBox(x, y, x + w, y + h, GetColor(70, 80, 110), FALSE);
+    DrawFillBox(x, y, x + w, y + h, Color(30, 35, 50).Code());
+    DrawBox(x, y, x + w, y + h, Color(70, 80, 110).Code(), FALSE);
     // body
-    DrawFillBox(x + 20,      y + h/3,     x + w - 20, y + h - 25, GetColor(70, 90, 140));
+    DrawFillBox(x + 20,      y + h/3,     x + w - 20, y + h - 25, Color(70, 90, 140).Code());
     // roof
-    DrawFillBox(x + w/4,     y + 15,      x + w*3/4,  y + h/2,    GetColor(90, 110, 160));
+    DrawFillBox(x + w/4,     y + 15,      x + w*3/4,  y + h/2,    Color(90, 110, 160).Code());
     // wheels
-    DrawFillBox(x + 20,      y + h - 30,  x + 55,     y + h - 10, GetColor(30, 30, 30));
-    DrawFillBox(x + w - 55,  y + h - 30,  x + w - 20, y + h - 10, GetColor(30, 30, 30));
-    DrawString(x + 8, y + h - 55, name, GetColor(200, 200, 200));
+    DrawFillBox(x + 20,      y + h - 30,  x + 55,     y + h - 10, Color(30, 30, 30).Code());
+    DrawFillBox(x + w - 55,  y + h - 30,  x + w - 20, y + h - 10, Color(30, 30, 30).Code());
+    DrawString(x + 8, y + h - 55, name, Color(200, 200, 200).Code());
 }
 
 // ── Resource ──────────────────────────────────────────────────
@@ -270,7 +271,7 @@ void DrawCustomize(void) {
     if (s_hBg >= 0) {
         DrawExtendGraph(0, 0, 800, 600, s_hBg, TRUE);
     } else {
-        DrawFillBox(0, 0, 800, 600, GetColor(20, 25, 40));
+        DrawFillBox(0, 0, 800, 600, Color(20, 25, 40).Code());
     }
 
     // ── Left: Car sprite ─────────────────────────────────────
@@ -281,14 +282,14 @@ void DrawCustomize(void) {
     }
 
     // Wallet top-left
-    DrawFormatString(CAR_X, CAR_Y - 22, GetColor(255, 220, 0),
+    DrawFormatString(CAR_X, CAR_Y - 22, Color(255, 220, 0).Code(),
                      "Wallet: $%d", g_gameData.money);
 
     // ── Left: Stat bars ──────────────────────────────────────
     CarStats cur  = CalcStats(car);
     CarStats prev = CalcPreviewStats(car, pi);
 
-    DrawString(BAR_X, BAR_Y - 20, "Performance", GetColor(160, 160, 160));
+    DrawString(BAR_X, BAR_Y - 20, "Performance", Color(160, 160, 160).Code());
     DrawStatBar(BAR_X, BAR_Y,      "Top Speed", cur.maxSpeed, prev.maxSpeed, 400.0f);
     DrawStatBar(BAR_X, BAR_Y + 35, "Accel    ", cur.accel,    prev.accel,      6.0f);
 
@@ -297,15 +298,15 @@ void DrawCustomize(void) {
         SI_4 isSel = (i == s_categoryIndex);
         SI_4 isTab = (s_state == CUST_STATE_TAB);
         SI_4 col;
-        if (isSel && isTab) col = GetColor(255, 255, 0);
-        else if (isSel)     col = GetColor(200, 200, 100);
-        else                col = GetColor(140, 140, 140);
+        if (isSel && isTab) col = Color::YELLOW.Code();
+        else if (isSel)     col = Color(200, 200, 100).Code();
+        else                col = Color(140, 140, 140).Code();
 
         DrawFormatString(TAB_X + i * TAB_W, TAB_Y, col,
                          "%s%s", isSel ? "[" : " ", CAT_LABELS[i]);
         if (isSel) DrawFormatString(TAB_X + i * TAB_W + (SI_4)(strlen(CAT_LABELS[i]) * 8), TAB_Y, col, "]");
     }
-    DrawLine(TAB_X - 5, TAB_Y + 18, 790, TAB_Y + 18, GetColor(80, 80, 80));
+    DrawLine(TAB_X - 5, TAB_Y + 18, 790, TAB_Y + 18, Color(80, 80, 80).Code());
 
     // ── Right: Parts list ────────────────────────────────────
     SI_4 equippedPI = car->equippedParts[s_categoryIndex];
@@ -316,9 +317,9 @@ void DrawCustomize(void) {
         SI_4 isEquip = (listPI == equippedPI) || (listPI == -1 && equippedPI == -1);
 
         SI_4 col;
-        if (isSel && s_state == CUST_STATE_LIST) col = GetColor(255, 255, 0);
-        else if (isSel)                           col = GetColor(200, 200, 100);
-        else                                      col = GetColor(160, 160, 160);
+        if (isSel && s_state == CUST_STATE_LIST) col = Color::YELLOW.Code();
+        else if (isSel)                           col = Color(200, 200, 100).Code();
+        else                                      col = Color(160, 160, 160).Code();
 
         if (listPI == -1) {
             DrawFormatString(LIST_X, LIST_Y + i * LIST_LINE_H, col,
@@ -327,7 +328,7 @@ void DrawCustomize(void) {
                              isEquip ? " [equipped]" : "");
         } else {
             SI_4 affordable = (g_gameData.money >= PARTS_TABLE[listPI].price);
-            SI_4 nameCol = affordable ? col : GetColor(120, 80, 80);
+            SI_4 nameCol = affordable ? col : Color(120, 80, 80).Code();
             DrawFormatString(LIST_X, LIST_Y + i * LIST_LINE_H, nameCol,
                              "%s %-18s $%-5d%s",
                              isSel ? ">" : " ",
@@ -338,26 +339,26 @@ void DrawCustomize(void) {
     }
 
     // ── Right: Part detail panel ─────────────────────────────
-    DrawLine(TAB_X - 5, DETAIL_Y - 10, 790, DETAIL_Y - 10, GetColor(80, 80, 80));
+    DrawLine(TAB_X - 5, DETAIL_Y - 10, 790, DETAIL_Y - 10, Color(80, 80, 80).Code());
 
     if (pi == -1) {
-        DrawString(DETAIL_X, DETAIL_Y, "(none) - unequip current part", GetColor(160, 160, 160));
-        DrawString(DETAIL_X, DETAIL_Y + DETAIL_LINE, "No cost / no refund", GetColor(120, 120, 120));
+        DrawString(DETAIL_X, DETAIL_Y, "(none) - unequip current part", Color(160, 160, 160).Code());
+        DrawString(DETAIL_X, DETAIL_Y + DETAIL_LINE, "No cost / no refund", Color(120, 120, 120).Code());
     } else {
         DrawFormatString(DETAIL_X, DETAIL_Y,
-                         GetColor(255, 255, 255), "%s", PARTS_TABLE[pi].name);
+                         Color::WHITE.Code(), "%s", PARTS_TABLE[pi].name);
         DrawFormatString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 1,
-                         GetColor(200, 200, 200),
+                         Color(200, 200, 200).Code(),
                          "Top Speed  %+.0f km/h", PARTS_TABLE[pi].maxSpeedBonus);
         DrawFormatString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 2,
-                         GetColor(200, 200, 200),
+                         Color(200, 200, 200).Code(),
                          "Accel      %+.2f", PARTS_TABLE[pi].accelBonus);
         DrawFormatString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 3,
-                         GetColor(255, 220, 80),
+                         Color(255, 220, 80).Code(),
                          "Price      $%d", PARTS_TABLE[pi].price);
 
         SI_4 moneyCol = (g_gameData.money >= PARTS_TABLE[pi].price)
-                        ? GetColor(255, 255, 255) : GetColor(255, 80, 80);
+                        ? Color::WHITE.Code() : Color(255, 80, 80).Code();
         DrawFormatString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 4, moneyCol,
                          "Wallet     $%d%s",
                          g_gameData.money,
@@ -367,21 +368,21 @@ void DrawCustomize(void) {
     // Cannot-afford flash
     if (s_cantAfford > 0 && (s_cantAfford / 8) % 2 == 0) {
         DrawString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 5,
-                   "! Not enough money !", GetColor(255, 80, 80));
+                   "! Not enough money !", Color(255, 80, 80).Code());
     }
 
     // ── Buttons ──────────────────────────────────────────────
     SI_4 showMenu = (s_state == CUST_STATE_MENU);
-    SI_4 equipCol = (showMenu && s_cursorPos == 0) ? GetColor(255,255,0) : GetColor(130,130,130);
-    SI_4 backCol  = (showMenu && s_cursorPos == 1) ? GetColor(255,255,0) : GetColor(130,130,130);
+    SI_4 equipCol = (showMenu && s_cursorPos == 0) ? Color::YELLOW.Code() : Color(130, 130, 130).Code();
+    SI_4 backCol  = (showMenu && s_cursorPos == 1) ? Color::YELLOW.Code() : Color(130, 130, 130).Code();
 
     if (showMenu) {
         if (s_cursorPos == 0)
             DrawBox(BTN_EQUIP_X - 4, BTN_Y - 3, BTN_EQUIP_X + 80, BTN_Y + 19,
-                    GetColor(255,255,0), FALSE);
+                    Color::YELLOW.Code(), FALSE);
         else
             DrawBox(BTN_BACK_X - 4, BTN_Y - 3, BTN_BACK_X + 65, BTN_Y + 19,
-                    GetColor(255,255,0), FALSE);
+                    Color::YELLOW.Code(), FALSE);
     }
     DrawString(BTN_EQUIP_X, BTN_Y, "[ Equip ]", equipCol);
     DrawString(BTN_BACK_X,  BTN_Y, "[ Back ]",  backCol);
@@ -393,5 +394,5 @@ void DrawCustomize(void) {
     case CUST_STATE_LIST: hint = "[Up/Down] Select  [Z/Enter] Confirm  [ESC] Back";      break;
     case CUST_STATE_MENU: hint = "[Left/Right] Choose  [Z/Enter] Decide  [ESC] Cancel";  break;
     }
-    DrawString(10, 578, hint, GetColor(80, 80, 80));
+    DrawString(10, 578, hint, Color(80, 80, 80).Code());
 }

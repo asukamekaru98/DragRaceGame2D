@@ -1,4 +1,5 @@
 #include "../DxLib/DxLib.h"
+#include "../header/share.h"
 #include "../header/screen_manager.h"
 #include "../header/input.h"
 #include "../header/game_data.h"
@@ -73,7 +74,7 @@ static void DrawCard(SI_4 cardX, SI_4 cardY, SI_4 idx, SI_4 selected) {
     const CarData* car = &CAR_TABLE[idx];
 
     // Card body
-    SI_4 bgCol = selected ? GetColor(50, 50, 70) : GetColor(30, 30, 40);
+    SI_4 bgCol = selected ? Color(50, 50, 70).Code() : Color(30, 30, 40).Code();
     DrawFillBox(cardX, cardY, cardX + CARD_WIDTH, cardY + CARD_HEIGHT, bgCol);
 
     // Sprite or placeholder silhouette
@@ -85,35 +86,35 @@ static void DrawCard(SI_4 cardX, SI_4 cardY, SI_4 idx, SI_4 selected) {
         // Simple silhouette
         SI_4 sx = cardX + 15, sy = cardY + 20;
         SI_4 sw = CARD_WIDTH - 30, sh = CARD_HEIGHT - 50;
-        DrawFillBox(sx,          sy + sh / 3, sx + sw,      sy + sh,     GetColor(80, 100, 140));
-        DrawFillBox(sx + sw / 4, sy,          sx + sw * 3/4, sy + sh / 2, GetColor(110, 130, 170));
-        DrawFillBox(sx + 5,      sy + sh - 8, sx + 25,      sy + sh + 5, GetColor(30, 30, 30));
-        DrawFillBox(sx + sw - 25,sy + sh - 8, sx + sw - 5,  sy + sh + 5, GetColor(30, 30, 30));
+        DrawFillBox(sx,          sy + sh / 3, sx + sw,      sy + sh,     Color(80, 100, 140).Code());
+        DrawFillBox(sx + sw / 4, sy,          sx + sw * 3/4, sy + sh / 2, Color(110, 130, 170).Code());
+        DrawFillBox(sx + 5,      sy + sh - 8, sx + 25,      sy + sh + 5, Color(30, 30, 30).Code());
+        DrawFillBox(sx + sw - 25,sy + sh - 8, sx + sw - 5,  sy + sh + 5, Color(30, 30, 30).Code());
     }
 
     // Cannot afford: dark overlay
     if (!CanAfford(idx)) {
         SetDrawBlendMode(DX_BLENDMODE_ALPHA, 150);
-        DrawFillBox(cardX, cardY, cardX + CARD_WIDTH, cardY + CARD_HEIGHT, GetColor(0, 0, 0));
+        DrawFillBox(cardX, cardY, cardX + CARD_WIDTH, cardY + CARD_HEIGHT, Color::BLACK.Code());
         SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
     }
 
     // Already owned: green tint overlay
     if (AlreadyOwned(idx)) {
         SetDrawBlendMode(DX_BLENDMODE_ALPHA, 60);
-        DrawFillBox(cardX, cardY, cardX + CARD_WIDTH, cardY + CARD_HEIGHT, GetColor(0, 200, 0));
+        DrawFillBox(cardX, cardY, cardX + CARD_WIDTH, cardY + CARD_HEIGHT, Color(0, 200, 0).Code());
         SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
     }
 
     // Border (bright yellow for selected)
-    SI_4 borderCol = selected ? GetColor(255, 255, 0) : GetColor(80, 80, 100);
+    SI_4 borderCol = selected ? Color::YELLOW.Code() : Color(80, 80, 100).Code();
     DrawBox(cardX, cardY, cardX + CARD_WIDTH, cardY + CARD_HEIGHT, borderCol, FALSE);
 
     // Car name
-    DrawString(cardX + 5, cardY + CARD_HEIGHT - 22, car->name, GetColor(220, 220, 220));
+    DrawString(cardX + 5, cardY + CARD_HEIGHT - 22, car->name, Color(220, 220, 220).Code());
 
     // Price below card
-    SI_4 priceCol = CanAfford(idx) ? GetColor(255, 220, 80) : GetColor(160, 80, 80);
+    SI_4 priceCol = CanAfford(idx) ? Color(255, 220, 80).Code() : Color(160, 80, 80).Code();
     DrawFormatString(cardX + 5, cardY + CARD_HEIGHT + 6, priceCol, "$%d", car->price);
 }
 
@@ -214,8 +215,8 @@ void DrawDealer(void) {
     if (s_hBg >= 0) {
         DrawExtendGraph(0, 0, 800, 600, s_hBg, TRUE);
     } else {
-        DrawFillBox(0, 0, 800, 600, GetColor(25, 20, 35));
-        DrawString(10, 10, "CAR DEALER", GetColor(200, 160, 80));
+        DrawFillBox(0, 0, 800, 600, Color(25, 20, 35).Code());
+        DrawString(10, 10, "CAR DEALER", Color(200, 160, 80).Code());
     }
 
     // ── Card row ─────────────────────────────────────────────
@@ -230,10 +231,10 @@ void DrawDealer(void) {
 
     // Arrow hints
     if (s_carIndex > 0) {
-        DrawString(20, CARD_Y + CARD_HEIGHT / 2, "<", GetColor(200, 200, 200));
+        DrawString(20, CARD_Y + CARD_HEIGHT / 2, "<", Color(200, 200, 200).Code());
     }
     if (s_carIndex < CAR_TABLE_COUNT - 1) {
-        DrawString(770, CARD_Y + CARD_HEIGHT / 2, ">", GetColor(200, 200, 200));
+        DrawString(770, CARD_Y + CARD_HEIGHT / 2, ">", Color(200, 200, 200).Code());
     }
 
     // ── Detail panel ─────────────────────────────────────────
@@ -243,17 +244,17 @@ void DrawDealer(void) {
     for (int i = 0; i < 5; i++) stars[i] = (i < fullStars) ? '*' : '-';
 
     DrawFormatString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 0,
-                     GetColor(255, 255, 255), "Name      : %s", car->name);
+                     Color::WHITE.Code(), "Name      : %s", car->name);
     DrawFormatString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 1,
-                     GetColor(255, 255, 255), "Top Speed : %.0f km/h", car->maxSpeed);
+                     Color::WHITE.Code(), "Top Speed : %.0f km/h", car->maxSpeed);
     DrawFormatString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 2,
-                     GetColor(255, 255, 255), "Accel     : [%s]", stars);
+                     Color::WHITE.Code(), "Accel     : [%s]", stars);
     DrawFormatString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 3,
-                     GetColor(255, 255, 255), "Gears     : %d", car->gearCount);
+                     Color::WHITE.Code(), "Gears     : %d", car->gearCount);
     DrawFormatString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 4,
-                     GetColor(255, 220, 80),  "Price     : $%d", car->price);
+                     Color(255, 220, 80).Code(),  "Price     : $%d", car->price);
 
-    SI_4 moneyCol = CanAfford(s_carIndex) ? GetColor(255, 255, 255) : GetColor(255, 80, 80);
+    SI_4 moneyCol = CanAfford(s_carIndex) ? Color::WHITE.Code() : Color(255, 80, 80).Code();
     DrawFormatString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 5, moneyCol,
                      "Wallet    : $%d%s",
                      g_gameData.money,
@@ -262,17 +263,17 @@ void DrawDealer(void) {
     // Already owned label
     if (AlreadyOwned(s_carIndex)) {
         DrawString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 6,
-                   "[Already Owned]", GetColor(100, 220, 100));
+                   "[Already Owned]", Color(100, 220, 100).Code());
     }
 
     // ── Buttons ──────────────────────────────────────────────
     if (s_state == DEALER_STATE_MENU) {
-        SI_4 buyCol  = (s_cursorPos == 0) ? GetColor(255, 255, 0) : GetColor(180, 180, 180);
-        SI_4 backCol = (s_cursorPos == 1) ? GetColor(255, 255, 0) : GetColor(180, 180, 180);
+        SI_4 buyCol  = (s_cursorPos == 0) ? Color::YELLOW.Code() : Color(180, 180, 180).Code();
+        SI_4 backCol = (s_cursorPos == 1) ? Color::YELLOW.Code() : Color(180, 180, 180).Code();
 
         // Highlight box on selected button
-        if (s_cursorPos == 0) DrawBox(BTN_BUY_X  - 5, BTN_Y - 4, BTN_BUY_X  + 85, BTN_Y + 20, GetColor(255,255,0), FALSE);
-        else                   DrawBox(BTN_BACK_X - 5, BTN_Y - 4, BTN_BACK_X + 55, BTN_Y + 20, GetColor(255,255,0), FALSE);
+        if (s_cursorPos == 0) DrawBox(BTN_BUY_X  - 5, BTN_Y - 4, BTN_BUY_X  + 85, BTN_Y + 20, Color::YELLOW.Code(), FALSE);
+        else                   DrawBox(BTN_BACK_X - 5, BTN_Y - 4, BTN_BACK_X + 55, BTN_Y + 20, Color::YELLOW.Code(), FALSE);
 
         DrawString(BTN_BUY_X,  BTN_Y, "[ Buy ]", buyCol);
         DrawString(BTN_BACK_X, BTN_Y, "[ Back ]", backCol);
@@ -280,19 +281,19 @@ void DrawDealer(void) {
         // Cannot-afford flash message
         if (s_cantAfford > 0 && (s_cantAfford / 8) % 2 == 0) {
             DrawString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 7,
-                       "! Not enough money !", GetColor(255, 80, 80));
+                       "! Not enough money !", Color(255, 80, 80).Code());
         }
     } else {
-        DrawString(BTN_BUY_X,  BTN_Y, "[ Buy ]",  GetColor(120, 120, 120));
-        DrawString(BTN_BACK_X, BTN_Y, "[ Back ]", GetColor(120, 120, 120));
+        DrawString(BTN_BUY_X,  BTN_Y, "[ Buy ]",  Color(120, 120, 120).Code());
+        DrawString(BTN_BACK_X, BTN_Y, "[ Back ]", Color(120, 120, 120).Code());
     }
 
     // Controls hint
     if (s_state == DEALER_STATE_CARD) {
         DrawString(10, 575, "[Left/Right] Browse  [Z/Enter] Select  [ESC] Back",
-                   GetColor(90, 90, 90));
+                   Color(90, 90, 90).Code());
     } else {
         DrawString(10, 575, "[Left/Right] Choose  [Z/Enter] Confirm  [ESC] Cancel",
-                   GetColor(90, 90, 90));
+                   Color(90, 90, 90).Code());
     }
 }

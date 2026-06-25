@@ -1,4 +1,5 @@
 #include "../DxLib/DxLib.h"
+#include "../header/share.h"
 #include "../header/screen_manager.h"
 #include "../header/input.h"
 #include "../header/game_data.h"
@@ -71,7 +72,7 @@ static void DrawBg(int hImg, int colorIndex) {
         int r = BG_COLORS[colorIndex][0];
         int g = BG_COLORS[colorIndex][1];
         int b = BG_COLORS[colorIndex][2];
-        DrawFillBox(0, 0, 800, 600, GetColor(r, g, b));
+        DrawFillBox(0, 0, 800, 600, Color(r, g, b).Code());
     }
 }
 
@@ -81,14 +82,14 @@ static void DrawCarSprite(int hSprite, int x, int y, int w, int h, const char* n
         DrawGraph(x, y, hSprite, TRUE);
     } else {
         // Placeholder: dark rectangle with car name
-        DrawBox(x, y, x + w, y + h, GetColor(80, 80, 80), TRUE);
-        DrawBox(x, y, x + w, y + h, GetColor(160, 160, 160), FALSE);
+        DrawBox(x, y, x + w, y + h, Color(80, 80, 80).Code(), TRUE);
+        DrawBox(x, y, x + w, y + h, Color(160, 160, 160).Code(), FALSE);
         // Simple car silhouette
-        DrawBox(x + 20, y + 30,  x + w - 20, y + h - 20, GetColor(100, 120, 160), TRUE);
-        DrawBox(x + 50, y + 10,  x + w - 50, y + 40,     GetColor(140, 160, 200), TRUE);
-        DrawFillBox(x + 15,      y + h - 30, x + 45,      y + h - 10, GetColor(40, 40, 40));
-        DrawFillBox(x + w - 45,  y + h - 30, x + w - 15,  y + h - 10, GetColor(40, 40, 40));
-        DrawString(x + 10, y + h / 2 - 8, name, GetColor(220, 220, 220));
+        DrawBox(x + 20, y + 30,  x + w - 20, y + h - 20, Color(100, 120, 160).Code(), TRUE);
+        DrawBox(x + 50, y + 10,  x + w - 50, y + 40,     Color(140, 160, 200).Code(), TRUE);
+        DrawFillBox(x + 15,      y + h - 30, x + 45,      y + h - 10, Color(40, 40, 40).Code());
+        DrawFillBox(x + w - 45,  y + h - 30, x + w - 15,  y + h - 10, Color(40, 40, 40).Code());
+        DrawString(x + 10, y + h / 2 - 8, name, Color(220, 220, 220).Code());
     }
 }
 
@@ -142,9 +143,9 @@ void DrawGarage(void) {
     // Horizontal arrow hints (multiple cars only)
     if (g_gameData.carCount > 1) {
         DrawString(CAR_SPRITE_X - 28, CAR_SPRITE_Y + CAR_SPRITE_H / 2 - 8,
-                   "<", GetColor(255, 255, 255));
+                   "<", Color::WHITE.Code());
         DrawString(CAR_SPRITE_X + CAR_SPRITE_W + 12, CAR_SPRITE_Y + CAR_SPRITE_H / 2 - 8,
-                   ">", GetColor(255, 255, 255));
+                   ">", Color::WHITE.Code());
     }
 
     // Car sprite
@@ -153,22 +154,22 @@ void DrawGarage(void) {
 
     // Car stats (below sprite)
     DrawFormatString(CAR_SPRITE_X, CAR_SPRITE_Y + CAR_SPRITE_H + 8,
-                     GetColor(180, 180, 180),
+                     Color(180, 180, 180).Code(),
                      "%.0f km/h  Gear:%d",
                      car->maxSpeed, car->gearCount);
 
     // Money display (top right)
-    DrawFormatString(600, 10, GetColor(255, 220, 0), "$ %d", g_gameData.money);
+    DrawFormatString(600, 10, Color(255, 220, 0).Code(), "$ %d", g_gameData.money);
 
     // Vertical menu
     for (int i = 0; i < GARAGE_MENU_COUNT; i++) {
         int isSel = (i == s_menuIndex);
-        int col   = isSel ? GetColor(255, 255, 0) : GetColor(180, 180, 180);
+        int col   = isSel ? Color::YELLOW.Code() : Color(180, 180, 180).Code();
         DrawFormatString(MENU_X, MENU_Y + i * MENU_LINE_H, col,
                          "%s %s", isSel ? ">" : " ", MENU_LABELS[i]);
     }
 
     // Controls hint
     DrawString(10, 575, "[Z/Enter] Select  [Up/Down] Menu  [Left/Right] Car",
-               GetColor(100, 100, 100));
+               Color(100, 100, 100).Code());
 }

@@ -133,6 +133,7 @@
     <ClCompile Include="source\manager\resourceManager.cpp" />
     <ClCompile Include="source\screen_manager.cpp" />
     <ClCompile Include="source\input.cpp" />
+    <ClCompile Include="source\share.cpp" />
     <ClCompile Include="source\title_resource.cpp" />
     <ClCompile Include="source\opening.cpp" />
     <ClCompile Include="source\title.cpp" />
@@ -147,6 +148,8 @@
     <ClCompile Include="source\result.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\const.h" />
+    <ClInclude Include="header\share.h" />
     <ClInclude Include="header\main.h" />
     <ClInclude Include="header\resourceManager.h" />
     <ClInclude Include="header\typedef.h" />

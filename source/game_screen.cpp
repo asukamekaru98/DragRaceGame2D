@@ -1,4 +1,5 @@
 #include "../DxLib/DxLib.h"
+#include "../header/share.h"
 #include "../header/screen_manager.h"
 #include "../header/input.h"
 #include "../header/game_screen.h"
@@ -28,7 +29,7 @@ void UpdateGame(void) {
 }
 
 void DrawGame(void) {
-    DrawFillBox(0, 0, 800, 600, GetColor(10, 10, 20));
-    DrawString(300, 270, "RACE IN PROGRESS...", GetColor(200, 200, 200));
-    DrawFormatString(340, 310, GetColor(100, 100, 100), "%d / %d", s_timer, WAIT_FRAMES);
+    DrawFillBox(0, 0, 800, 600, Color(10, 10, 20).Code());
+    DrawString(300, 270, "RACE IN PROGRESS...", Color(200, 200, 200).Code());
+    DrawFormatString(340, 310, Color(100, 100, 100).Code(), "%d / %d", s_timer, WAIT_FRAMES);
 }

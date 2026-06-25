@@ -1,5 +1,3 @@
 #pragma once
 
 #define WINDOW_SCREEN_NAME	"ÉÅÅ[É^Å["
-
-#define ERROR				-1

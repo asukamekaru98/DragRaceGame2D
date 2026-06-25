@@ -7,15 +7,16 @@
 #include "../header/opening.h"
 #include "../header/debug.h"
 #include "../header/game_data.h"
+#include "../header/const.h"
 
 static INIT_RESULT InitProgram(void) {
     ChangeWindowMode(TRUE);
     SetMainWindowText(WINDOW_SCREEN_NAME);
-    SetGraphMode(800, 600, 32);
+    SetGraphMode(SCREEN_SIZE_WIDTH, SCREEN_SIZE_HEIGHT, COLOR_BIT_DEPTH);
     SetWindowSizeChangeEnableFlag(FALSE);
     SetUseCharCodeFormat(DX_CHARCODEFORMAT_UTF8);
 
-    if (DxLib_Init() == -1) {
+    if (DxLib_Init() == ERROR) {
         throw INIT_RESULT_ERROR;
     }
 
@@ -49,7 +50,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     g_screen.nextDraw = NULL;
 #endif
 
-    while (ProcessMessage() == 0) {
+    while (ProcessMessage() == SUCCESS) {
         ClearDrawScreen();
 
         UpdateInput();

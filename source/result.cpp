@@ -1,4 +1,5 @@
 #include "../DxLib/DxLib.h"
+#include "../header/share.h"
 #include "../header/screen_manager.h"
 #include "../header/input.h"
 #include "../header/game_data.h"
@@ -106,16 +107,16 @@ void DrawResult(void) {
     if (s_hBg >= 0) {
         DrawExtendGraph(0, 0, 800, 600, s_hBg, TRUE);
     } else {
-        DrawFillBox(0, 0, 800, 600, GetColor(15, 10, 25));
+        DrawFillBox(0, 0, 800, 600, Color(15, 10, 25).Code());
     }
 
     // ① Win / Lose
     if (s_itemAlpha[0] > 0.0f) {
         SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)s_itemAlpha[0]);
         if (g_gameData.lastRank == 1) {
-            DrawString(290, 120, "** WIN **", GetColor(255, 220, 0));
+            DrawString(290, 120, "** WIN **", Color(255, 220, 0).Code());
         } else {
-            DrawString(300, 120, "LOSE...",   GetColor(150, 150, 150));
+            DrawString(300, 120, "LOSE...",   Color(150, 150, 150).Code());
         }
         SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
     }
@@ -126,7 +127,7 @@ void DrawResult(void) {
         FormatTime(g_gameData.lastTime, &mn, &sc, &ms);
         SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)s_itemAlpha[1]);
         DrawFormatString(RESULT_LABEL_X, RESULT_Y + RESULT_LINE_H * 0,
-                         GetColor(255, 255, 255),
+                         Color::WHITE.Code(),
                          "Time        :  %02d:%02d.%02d", mn, sc, ms);
         SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
     }
@@ -136,12 +137,12 @@ void DrawResult(void) {
         SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)s_itemAlpha[2]);
         if (g_gameData.bestTime < 0.0f) {
             DrawString(RESULT_LABEL_X, RESULT_Y + RESULT_LINE_H * 1,
-                       "Best Time   :  --:--.--", GetColor(255, 255, 255));
+                       "Best Time   :  --:--.--", Color::WHITE.Code());
         } else {
             int mn, sc, ms;
             FormatTime(g_gameData.bestTime, &mn, &sc, &ms);
             DrawFormatString(RESULT_LABEL_X, RESULT_Y + RESULT_LINE_H * 1,
-                             GetColor(255, 255, 255),
+                             Color::WHITE.Code(),
                              "Best Time   :  %02d:%02d.%02d%s",
                              mn, sc, ms,
                              s_isBestUpdated ? "  [NEW RECORD!]" : "");
@@ -153,7 +154,7 @@ void DrawResult(void) {
     if (s_itemAlpha[3] > 0.0f) {
         SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)s_itemAlpha[3]);
         DrawFormatString(RESULT_LABEL_X, RESULT_Y + RESULT_LINE_H * 2,
-                         GetColor(255, 220, 0),
+                         Color(255, 220, 0).Code(),
                          "Prize       :  + $%d", s_prize);
         SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
     }
@@ -162,7 +163,7 @@ void DrawResult(void) {
     if (s_itemAlpha[4] > 0.0f) {
         SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)s_itemAlpha[4]);
         DrawFormatString(RESULT_LABEL_X, RESULT_Y + RESULT_LINE_H * 3,
-                         GetColor(255, 255, 255),
+                         Color::WHITE.Code(),
                          "Wallet      :  $%d", g_gameData.money);
         SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
     }
@@ -170,7 +171,7 @@ void DrawResult(void) {
     // PRESS ANY KEY (blink)
     if (s_allShown) {
         if ((s_blinkTimer / BLINK_INTERVAL) % 2 == 0) {
-            DrawString(275, 520, "PRESS ANY KEY", GetColor(255, 255, 255));
+            DrawString(275, 520, "PRESS ANY KEY", Color::WHITE.Code());
         }
     }
 }
