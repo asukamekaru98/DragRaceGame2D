@@ -1,11 +1,9 @@
 #pragma once
+#include "../header/typedef.h"
 
 // 色を表す値オブジェクト。DxLib の GetColor を隠蔽し、
 // 描画系には Code() が返すカラーコードのみを渡す。
 class Color {
-private:
-	uchar r_, g_, b_;
-
 public:
 	// constructor
 	Color(uchar r, uchar g, uchar b);
@@ -21,4 +19,7 @@ public:
 	static const Color CYAN;
 	static const Color WHITE;
 	static const Color BLACK;
+
+private:
+	uchar r_, g_, b_;
 };

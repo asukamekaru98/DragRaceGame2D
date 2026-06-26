@@ -52,6 +52,10 @@ void UpdateTitle(void) {
             s_initialized = 0;
             ChangeScreen(UpdateDebugMenu, DrawDebugMenu);
             return;
+        }else  if (IsKeyTriggered(KEY_INPUT_F2)) {
+            s_initialized = 0;
+            ChangeScreen(UpdateDebugMenu, DrawDebugMenu);
+            return;
         }
 #endif
         if (CheckHitKeyAll(DX_CHECKINPUT_ALL) != 0) {

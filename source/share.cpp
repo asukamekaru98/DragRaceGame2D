@@ -1,9 +1,8 @@
 #include "../header/share.h"
-#include "../header/typedef.h"
+
 #include "../DxLib/DxLib.h"
 
-Color::Color(uchar r, uchar g, uchar b)
-	: r_(r), g_(g), b_(b) {}
+Color::Color(uchar r, uchar g, uchar b): r_(r), g_(g), b_(b) {}
 
 int Color::Code() const
 {
