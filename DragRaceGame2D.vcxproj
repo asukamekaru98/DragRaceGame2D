@@ -128,6 +128,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\car_engine\car_engine.cpp" />
+    <ClCompile Include="source\car_meter\car_meter.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\a.cpp" />
     <ClCompile Include="source\manager\resourceManager.cpp" />
@@ -167,6 +169,8 @@
     <ClInclude Include="header\game_screen.h" />
     <ClInclude Include="header\car_data.h" />
     <ClInclude Include="header\result.h" />
+    <ClInclude Include="source\car_engine\car_engine.h" />
+    <ClInclude Include="source\car_meter\car_meter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
