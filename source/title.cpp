@@ -52,9 +52,9 @@ void UpdateTitle(void) {
             s_initialized = 0;
             ChangeScreen(UpdateDebugMenu, DrawDebugMenu);
             return;
-        }else  if (IsKeyTriggered(KEY_INPUT_F2)) {
+        } else if (IsKeyTriggered(KEY_INPUT_F2)) {
             s_initialized = 0;
-            ChangeScreen(UpdateDebugMenu, DrawDebugMenu);
+            ChangeScreen(UpdateDebugMeter, DrawDebugMeter);
             return;
         }
 #endif
@@ -105,6 +105,6 @@ void DrawTitle(void) {
     }
 
 #ifdef _DEBUG
-    DrawString(630, 570, "[F1] DXLIB SAMPLE", Color::YELLOW.Code());
+    DrawString(560, 570, "[F1] DXLIB SAMPLE   [F2] CAR METER", Color::YELLOW.Code());
 #endif
 }

@@ -4,7 +4,9 @@
 #include "../header/input.h"
 #include "../header/debug.h"
 #include "../header/title.h"
+#include "../header/car_data.h"
 #include <string.h>
+#include <math.h>
 
 #ifdef _DEBUG
 
@@ -316,6 +318,173 @@ void DrawDebugInput(void) {
     DrawFormatString(420, 390,
                      isConnected ? Color(100, 255, 100).Code() : Color(255, 100, 100).Code(),
                      "Status: %s", isConnected ? "Connected" : "Not connected");
+}
+
+// ─────────────────────────────────────────
+// Car Meter (tachometer / speed) prototype
+//   A standalone screen for tuning the meter needle animation and behaviour.
+// ─────────────────────────────────────────
+
+#define MTR_RPM_IDLE     800.0f
+#define MTR_RPM_REDLINE  6800.0f
+#define MTR_RPM_MAX      8000.0f
+#define MTR_SMOOTH       0.15f      // needle easing (0..1, smaller = smoother/slower)
+#define MTR_TACH_START   210.0f     // needle angle (deg) at rpm 0
+#define MTR_TACH_SWEEP   240.0f     // total sweep (deg)
+
+static int   s_meterInit = 0;       // init-on-entry flag
+static int   s_meterCar  = 0;       // test car index into CAR_TABLE
+static float s_rpm       = MTR_RPM_IDLE;   // target engine rpm
+static float s_needleRpm = MTR_RPM_IDLE;   // displayed rpm (after easing)
+static int   s_gear      = 1;
+static float s_speed     = 0.0f;
+
+static void ResetMeter(void) {
+    s_rpm       = MTR_RPM_IDLE;
+    s_needleRpm = MTR_RPM_IDLE;
+    s_gear      = 1;
+    s_speed     = 0.0f;
+}
+
+// rpm fraction (0..1) -> point on the gauge at the given radius
+static void MeterPoint(int cx, int cy, float radius, float frac, int* ox, int* oy) {
+    float deg = MTR_TACH_START - frac * MTR_TACH_SWEEP;
+    float rad = deg * 3.14159265f / 180.0f;
+    *ox = cx + (int)(cosf(rad) * radius);
+    *oy = cy - (int)(sinf(rad) * radius);   // minus: screen y grows downward
+}
+
+void UpdateDebugMeter(void) {
+    if (!s_meterInit) { ResetMeter(); s_meterInit = 1; }
+
+    const CarData* car = &CAR_TABLE[s_meterCar];
+
+    // Throttle (hold Z): rev up with a rev-limiter, else engine-brake down to idle
+    if (IsKeyPressed(KEY_INPUT_Z)) {
+        s_rpm += car->acceleration * 40.0f;
+        if (s_rpm > MTR_RPM_REDLINE) s_rpm = MTR_RPM_REDLINE;
+    } else {
+        s_rpm -= 90.0f;
+        if (s_rpm < MTR_RPM_IDLE) s_rpm = MTR_RPM_IDLE;
+    }
+
+    // Gear shift: upshift drops rpm, downshift raises it
+    if (IsKeyTriggered(KEY_INPUT_RIGHT) && s_gear < car->gearCount) {
+        s_gear++;
+        s_rpm *= 0.6f;
+        if (s_rpm < MTR_RPM_IDLE) s_rpm = MTR_RPM_IDLE;
+    }
+    if (IsKeyTriggered(KEY_INPUT_LEFT) && s_gear > 1) {
+        s_gear--;
+        s_rpm *= 1.5f;
+        if (s_rpm > MTR_RPM_REDLINE) s_rpm = MTR_RPM_REDLINE;
+    }
+
+    // Switch test car with number keys 1..5
+    for (int i = 0; i < CAR_TABLE_COUNT && i < 5; i++) {
+        if (IsKeyTriggered(KEY_INPUT_1 + i)) {
+            s_meterCar = i;
+            ResetMeter();
+        }
+    }
+
+    if (IsKeyTriggered(KEY_INPUT_R)) ResetMeter();
+
+    // Speed from rpm and current gear (top gear at redline ~ car maxSpeed)
+    float gearTop = car->maxSpeed * ((float)s_gear / (float)car->gearCount);
+    float revFrac = (s_rpm - MTR_RPM_IDLE) / (MTR_RPM_REDLINE - MTR_RPM_IDLE);
+    if (revFrac < 0.0f) revFrac = 0.0f;
+    s_speed = gearTop * revFrac;
+
+    // Needle easing -- this is the animation being prototyped
+    s_needleRpm += (s_rpm - s_needleRpm) * MTR_SMOOTH;
+
+    if (IsKeyTriggered(KEY_INPUT_ESCAPE)) {
+        s_meterInit = 0;
+        ChangeScreen(UpdateTitle, DrawTitle);
+    }
+}
+
+void DrawDebugMeter(void) {
+    const CarData* car = &CAR_TABLE[s_meterCar];
+
+    DrawFormatString(10, 10, Color::YELLOW.Code(),
+                     "Car Meter (prototype)   Car[%d]: %s   [ESC] Back",
+                     s_meterCar + 1, car->name);
+    DrawLine(0, 35, 800, 35, Color(80, 80, 80).Code());
+
+    // ── Tachometer dial ──────────────────────────────
+    int   cx = 260, cy = 330;
+    float rOuter = 180.0f, rTick = 160.0f, rNeedle = 150.0f;
+
+    DrawCircle(cx, cy, (int)rOuter + 6, Color(45, 45, 55).Code(), TRUE);
+    DrawCircle(cx, cy, (int)rOuter,     Color(15, 15, 20).Code(), TRUE);
+
+    // redline band (drawn as short radial segments)
+    for (float f = MTR_RPM_REDLINE / MTR_RPM_MAX; f <= 1.0f; f += 0.008f) {
+        int ix, iy, ox, oy;
+        MeterPoint(cx, cy, rTick - 14, f, &ix, &iy);
+        MeterPoint(cx, cy, rOuter - 2, f, &ox, &oy);
+        DrawLine(ix, iy, ox, oy, Color::RED.Code());
+    }
+
+    // ticks + labels (0..8 = x1000 r/min)
+    for (int i = 0; i <= 8; i++) {
+        float f = (float)i / 8.0f;
+        int ix, iy, ox, oy, lx, ly;
+        MeterPoint(cx, cy, rTick - 18, f, &ix, &iy);
+        MeterPoint(cx, cy, rTick,      f, &ox, &oy);
+        DrawLine(ix, iy, ox, oy, Color::WHITE.Code());
+        MeterPoint(cx, cy, rTick - 40, f, &lx, &ly);
+        DrawFormatString(lx - 6, ly - 8, Color(200, 200, 200).Code(), "%d", i);
+    }
+
+    // needle (uses the eased value, not the raw target)
+    float needleFrac = s_needleRpm / MTR_RPM_MAX;
+    if (needleFrac > 1.0f) needleFrac = 1.0f;
+    int nx, ny;
+    MeterPoint(cx, cy, rNeedle, needleFrac, &nx, &ny);
+    // thick needle: triangle from a small base around the hub
+    float dx = (float)(nx - cx), dy = (float)(ny - cy);
+    float len = sqrtf(dx * dx + dy * dy);
+    if (len < 1.0f) len = 1.0f;
+    float px = -dy / len * 7.0f, py = dx / len * 7.0f;   // perpendicular * half width
+    int needleCol = (s_needleRpm >= MTR_RPM_REDLINE) ? Color::RED.Code()
+                                                     : Color(255, 80, 60).Code();
+    DrawTriangle(nx, ny,
+                 cx + (int)px, cy + (int)py,
+                 cx - (int)px, cy - (int)py, needleCol, TRUE);
+    DrawCircle(cx, cy, 18, Color(70, 70, 80).Code(), TRUE);
+    DrawCircle(cx, cy, 8,  Color(180, 180, 190).Code(), TRUE);
+    DrawString(cx - 40, cy + 70, "x1000 r/min", Color(120, 120, 130).Code());
+
+    // ── Right panel: digital readouts ────────────────
+    int px2 = 520, py2 = 110;
+
+    DrawString(px2, py2, "RPM", Color(150, 150, 160).Code());
+    DrawFormatString(px2 + 90, py2, Color::WHITE.Code(), "%5d", (int)s_needleRpm);
+
+    DrawString(px2, py2 + 50, "SPEED", Color(150, 150, 160).Code());
+    DrawFormatString(px2 + 90, py2 + 50, Color(120, 255, 120).Code(), "%6.1f km/h", s_speed);
+
+    DrawString(px2, py2 + 100, "GEAR", Color(150, 150, 160).Code());
+    DrawFormatString(px2 + 90, py2 + 100, Color::YELLOW.Code(), "%d / %d", s_gear, car->gearCount);
+
+    DrawString(px2, py2 + 150, "THROTTLE", Color(150, 150, 160).Code());
+    DrawFillBox(px2 + 90, py2 + 150, px2 + 112, py2 + 168,
+                IsKeyPressed(KEY_INPUT_Z) ? Color(0, 220, 0).Code() : Color(60, 60, 60).Code());
+
+    // speed bar
+    int barX = px2, barY = py2 + 210, barW = 230, barH = 16;
+    DrawBox(barX, barY, barX + barW, barY + barH, Color(100, 100, 100).Code(), FALSE);
+    float sp = (car->maxSpeed > 0.0f) ? s_speed / car->maxSpeed : 0.0f;
+    if (sp > 1.0f) sp = 1.0f;
+    DrawFillBox(barX + 1, barY + 1, barX + 1 + (int)((barW - 2) * sp), barY + barH - 1,
+                Color(80, 160, 255).Code());
+
+    DrawString(20, 565,
+               "[Z] Throttle   [<-/->] Shift Down/Up   [1-5] Car   [R] Reset   [ESC] Back",
+               Color(150, 150, 150).Code());
 }
 
 #endif // _DEBUG

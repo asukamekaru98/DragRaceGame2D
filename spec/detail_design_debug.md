@@ -8,9 +8,10 @@
 
 ```
 タイトル画面（デバッグビルドのみボタン表示）
-  └─> デバッグメニュー画面
-       ├─> 描画サンプル画面（ページ切替あり）
-       └─> 入力サンプル画面
+  ├─[F1]─> デバッグメニュー画面
+  │          ├─> 描画サンプル画面（ページ切替あり）
+  │          └─> 入力サンプル画面
+  └─[F2]─> 車メーター確認画面
 ```
 
 ---
@@ -484,7 +485,86 @@ void DrawDebugInput(void) {
 
 ---
 
-## 5. ファイル構成
+## 5. 車メーター確認画面（SCR_DEBUG_METER）
+
+> タイトル画面で **F2** を押すと遷移する。レース画面で使う車のメーター（タコメーター）の
+> 針アニメーションや、回転数・速度・ギアの挙動を単体で試作・確認するための画面。
+
+### 5.1 目的
+
+- タコメーターの**針の動き（イージング）**を調整する
+- スロットルON/OFF時の**回転数の上昇・下降**、**レブリミッター**の挙動を確認する
+- **ギアチェンジ**時に針が落ちる挙動を確認する
+- 回転数と現在ギアから算出した**速度（km/h）**の連動を確認する
+- 車種（CAR_TABLE）を切り替え、加速度・最高速・ギア数の違いを比較する
+
+### 5.2 操作
+
+| キー | 動作 |
+|------|------|
+| `Z`（押しっぱなし） | スロットル（回転数上昇） |
+| `→` | シフトアップ |
+| `←` | シフトダウン |
+| `1`〜`5` | テスト車種切り替え（CAR_TABLE のインデックス） |
+| `R` | リセット |
+| `ESC` | タイトルへ戻る |
+
+### 5.3 挙動モデル（プロトタイプ）
+
+物理的な厳密さより、メーターの見た目調整を目的とした簡易モデル。
+
+```
+定数:
+  アイドル回転       MTR_RPM_IDLE     =  800
+  レッドライン       MTR_RPM_REDLINE  = 6800
+  最大回転           MTR_RPM_MAX      = 8000
+  針のイージング係数 MTR_SMOOTH       = 0.15  （小さいほど滑らか＝追従が遅い）
+
+毎フレーム:
+  スロットルON  : rpm += car.acceleration * 40   （レッドラインで頭打ち＝レブリミッター）
+  スロットルOFF : rpm -= 90                       （エンジンブレーキ。アイドルが下限）
+  シフトアップ  : gear++ , rpm *= 0.6             （針が落ちる）
+  シフトダウン  : gear-- , rpm *= 1.5
+  速度          : gearTop = car.maxSpeed * (gear / gearCount)
+                  speed   = gearTop * (rpm - IDLE) / (REDLINE - IDLE)
+  針の表示値    : needleRpm += (rpm - needleRpm) * MTR_SMOOTH   ← ここが調整対象
+```
+
+### 5.4 レイアウト
+
+```
+┌────────────────────────────────────────────────────────────┐
+│ Car Meter (prototype)  Car: STOCK COUPE   [ESC] Back        │
+├────────────────────────────────────────────────────────────┤
+│                                  RPM     :  3200            │
+│            ／￣＼                 SPEED   :   95.0 km/h      │
+│           |  ◯  |  ← タコ針       GEAR    :  2 / 4          │
+│            ＼＿／                 THROTTLE: ■               │
+│          x1000 r/min              速度バー [■■■■        ]   │
+│                                                            │
+│  [Z] Throttle  [←/→] Shift  [1-5] Car  [R] Reset  [ESC]    │
+└────────────────────────────────────────────────────────────┘
+```
+
+- タコメーターは 0〜8（×1000 r/min）の目盛り、レッドライン帯（赤）、針で構成。
+- 針は `needleRpm`（イージング後の値）で描画し、生の `rpm` には直接追従させない。
+
+### 5.5 状態変数
+
+```cpp
+#ifdef _DEBUG
+static int   s_meterInit = 0;   // 入場時の初期化フラグ
+static int   s_meterCar  = 0;   // テスト車種インデックス
+static float s_rpm       = MTR_RPM_IDLE;   // 実回転数（目標）
+static float s_needleRpm = MTR_RPM_IDLE;   // 針の表示回転数（イージング後）
+static int   s_gear      = 1;
+static float s_speed     = 0.0f;
+#endif
+```
+
+---
+
+## 6. ファイル構成
 
 ```
 header/
@@ -505,12 +585,14 @@ void UpdateDebugDraw(void);
 void DrawDebugDraw(void);
 void UpdateDebugInput(void);
 void DrawDebugInput(void);
+void UpdateDebugMeter(void);
+void DrawDebugMeter(void);
 #endif
 ```
 
 ---
 
-## 6. タイトル画面のデバッグボタン（再掲・実装箇所）
+## 7. タイトル画面のデバッグボタン（再掲・実装箇所）
 
 ```cpp
 // source/title.cpp の DrawTitle() 内
@@ -520,11 +602,12 @@ DrawString(680, 570, "DXLIB SAMPLE", GetColor(255, 255, 0));
 
 // source/title.cpp の UpdateTitle() 内
 #ifdef _DEBUG
-// 右下ボタン付近でEnterを押したとき（簡易実装）
 if (IsKeyTriggered(KEY_INPUT_F1)) {
-    ChangeScreen(UpdateDebugMenu, DrawDebugMenu);
+    ChangeScreen(UpdateDebugMenu, DrawDebugMenu);   // 図形/入力サンプル
+} else if (IsKeyTriggered(KEY_INPUT_F2)) {
+    ChangeScreen(UpdateDebugMeter, DrawDebugMeter);  // 車メーター確認画面
 }
 #endif
 ```
 
-> F1キーをデバッグメニューへのショートカットとする案。マウスクリック対応はDxLibの `GetMousePoint` + `GetMouseInput` で実装できる。
+> F1＝デバッグメニュー、F2＝車メーター確認画面のショートカット。マウスクリック対応はDxLibの `GetMousePoint` + `GetMouseInput` で実装できる。
