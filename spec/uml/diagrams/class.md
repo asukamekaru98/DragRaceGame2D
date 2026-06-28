@@ -1,0 +1,128 @@
+```mermaid
+classDiagram
+    %% ===== エンジン層 =====
+    class CarEngineData {
+        <<struct>>
+        +rpm F_4
+        +speed F_4
+        +gear SI_4
+        +boostPressure F_4
+        +isBraking bool
+    }
+
+    class CarEngine {
+        -rpm_ F_4
+        -speed_ F_4
+        -gear_ SI_4
+        -boostPressure_ F_4
+        -carData_ CarData
+        -equippedParts_ SI_4[]
+        +Update(input KeyInput) void
+        +GetData() CarEngineData
+    }
+
+    CarEngine ..> CarData       : uses
+    CarEngine ..> PartsData     : tuned by
+    CarEngine ..> CarEngineData : outputs
+
+    %% ===== メーター層 =====
+    class GaugeBase {
+        <<abstract>>
+        +Update(data CarEngineData) void*
+        +Draw() void*
+        +PlayOpening() void*
+    }
+
+    class CarMeter {
+        -needleAngleRpm F_4
+        -needleAngleSpeed F_4
+        +Update(data CarEngineData) void
+        +Draw() void
+        +PlayOpening() void
+    }
+
+    class TurboGauge {
+        -needleAngle F_4
+        +Update(data CarEngineData) void
+        +Draw() void
+        +PlayOpening() void
+    }
+
+    class OilTempGauge {
+        -needleAngle F_4
+        +Update(data CarEngineData) void
+        +Draw() void
+        +PlayOpening() void
+    }
+
+    GaugeBase <|-- CarMeter
+    GaugeBase <|-- TurboGauge
+    GaugeBase <|-- OilTempGauge
+    GaugeBase ..> CarEngineData : reads
+
+    %% ===== データ層 =====
+    class CarData {
+        <<struct>>
+        +name string
+        +maxSpeed F_4
+        +acceleration F_4
+        +gearCount SI_4
+        +price SI_4
+    }
+
+    class PartsData {
+        <<struct>>
+        +name string
+        +category PARTS_CATEGORY
+        +gaugeType GAUGE_TYPE
+        +price SI_4
+        +maxSpeedBonus F_4
+        +accelBonus F_4
+    }
+
+    class GAUGE_TYPE {
+        <<enumeration>>
+        GAUGE_NONE
+        GAUGE_TURBO
+        GAUGE_OIL_TEMP
+    }
+
+    class PARTS_CATEGORY {
+        <<enumeration>>
+        PARTS_CAT_ENGINE
+        PARTS_CAT_TIRE
+        PARTS_CAT_BODY
+        PARTS_CAT_EXTERIOR
+    }
+
+    PartsData --> GAUGE_TYPE
+    PartsData --> PARTS_CATEGORY
+
+    %% ===== リソース層 =====
+    class ResourceManager {
+        <<abstract>>
+        +LoadResources() void
+        +UnloadResources() void
+        #GetResources()* RESOURCE_ITEM[]
+    }
+
+    class TitleResource {
+        -resources RESOURCE_ITEM[4]
+        #GetResources() RESOURCE_ITEM[]
+    }
+
+    class Color {
+        -r_ uchar
+        -g_ uchar
+        -b_ uchar
+        +Color(r, g, b)
+        +Code() int
+        +RED$ Color
+        +GREEN$ Color
+        +BLUE$ Color
+        +WHITE$ Color
+        +BLACK$ Color
+    }
+
+    ResourceManager <|-- TitleResource
+```
