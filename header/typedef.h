@@ -1,10 +1,13 @@
 #pragma once
+#include <string>
 
 typedef unsigned char		uchar;
 typedef unsigned short		ushort;
 typedef unsigned int		uint;
 typedef signed long long	long2;
 typedef unsigned long long	ulong2;
+
+typedef std::string			str;
 
 // 旧型エイリアス（既存ソースが使用中のため併存）
 typedef char				SC_1;
