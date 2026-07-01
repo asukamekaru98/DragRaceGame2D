@@ -64,8 +64,8 @@ static CarStats CalcStats(const PlayerCar* car) {
     for (int i = 0; i < PARTS_CAT_COUNT; i++) {
         SI_4 pi = car->equippedParts[i];
         if (pi >= 0) {
-            s.maxSpeed += PARTS_TABLE[pi].maxSpeedBonus;
-            s.accel    += PARTS_TABLE[pi].accelBonus;
+            s.maxSpeed += PARTS_TABLE[pi].fMaxSpeedBonus;
+            s.accel    += PARTS_TABLE[pi].fAccelBonus;
         }
     }
     return s;
@@ -74,7 +74,7 @@ static CarStats CalcStats(const PlayerCar* car) {
 static CarStats CalcPreviewStats(const PlayerCar* car, SI_4 previewPI) {
     PlayerCar tmp = *car;
     if (previewPI >= 0) {
-        SI_4 cat = (SI_4)PARTS_TABLE[previewPI].category;
+        SI_4 cat = (SI_4)PARTS_TABLE[previewPI].eCategory;
         tmp.equippedParts[cat] = previewPI;
     } else {
         // "(none)" selected — unequip current category
@@ -89,7 +89,7 @@ static void RebuildFilteredList(void) {
     // First entry is always "(none)" to allow unequipping
     s_filteredList[s_filteredCount++] = -1;
     for (int i = 0; i < PARTS_TABLE_COUNT; i++) {
-        if ((SI_4)PARTS_TABLE[i].category == s_categoryIndex) {
+        if ((SI_4)PARTS_TABLE[i].eCategory == s_categoryIndex) {
             s_filteredList[s_filteredCount++] = i;
         }
     }
@@ -100,7 +100,7 @@ static void RebuildFilteredList(void) {
 static void EquipParts(SI_4 pi) {
     PlayerCar* car = &g_gameData.cars[g_gameData.selectedCarIndex];
     if (pi >= 0) {
-        g_gameData.money -= PARTS_TABLE[pi].price;
+        g_gameData.money -= PARTS_TABLE[pi].iPrice;
         car->equippedParts[s_categoryIndex] = pi;
     } else {
         // Unequip — no cost, no refund
@@ -243,7 +243,7 @@ void UpdateCustomize(void) {
             if (s_cursorPos == 0) {
                 SI_4 pi = s_filteredList[s_partsIndex];
                 // free if unequipping or affordable
-                SI_4 cost = (pi >= 0) ? PARTS_TABLE[pi].price : 0;
+                SI_4 cost = (pi >= 0) ? PARTS_TABLE[pi].iPrice : 0;
                 if (g_gameData.money >= cost) {
                     EquipParts(pi);
                     s_initialized = 0;
@@ -327,13 +327,13 @@ void DrawCustomize(void) {
                              isSel ? ">" : " ",
                              isEquip ? " [equipped]" : "");
         } else {
-            SI_4 affordable = (g_gameData.money >= PARTS_TABLE[listPI].price);
+            SI_4 affordable = (g_gameData.money >= PARTS_TABLE[listPI].iPrice);
             SI_4 nameCol = affordable ? col : Color(120, 80, 80).Code();
             DrawFormatString(LIST_X, LIST_Y + i * LIST_LINE_H, nameCol,
                              "%s %-18s $%-5d%s",
                              isSel ? ">" : " ",
-                             PARTS_TABLE[listPI].name,
-                             PARTS_TABLE[listPI].price,
+                             PARTS_TABLE[listPI].pName,
+                             PARTS_TABLE[listPI].iPrice,
                              isEquip ? " [equipped]" : "");
         }
     }
@@ -346,23 +346,23 @@ void DrawCustomize(void) {
         DrawString(DETAIL_X, DETAIL_Y + DETAIL_LINE, "No cost / no refund", Color(120, 120, 120).Code());
     } else {
         DrawFormatString(DETAIL_X, DETAIL_Y,
-                         Color::WHITE.Code(), "%s", PARTS_TABLE[pi].name);
+                         Color::WHITE.Code(), "%s", PARTS_TABLE[pi].pName);
         DrawFormatString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 1,
                          Color(200, 200, 200).Code(),
-                         "Top Speed  %+.0f km/h", PARTS_TABLE[pi].maxSpeedBonus);
+                         "Top Speed  %+.0f km/h", PARTS_TABLE[pi].fMaxSpeedBonus);
         DrawFormatString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 2,
                          Color(200, 200, 200).Code(),
-                         "Accel      %+.2f", PARTS_TABLE[pi].accelBonus);
+                         "Accel      %+.2f", PARTS_TABLE[pi].fAccelBonus);
         DrawFormatString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 3,
                          Color(255, 220, 80).Code(),
-                         "Price      $%d", PARTS_TABLE[pi].price);
+                         "Price      $%d", PARTS_TABLE[pi].iPrice);
 
-        SI_4 moneyCol = (g_gameData.money >= PARTS_TABLE[pi].price)
+        SI_4 moneyCol = (g_gameData.money >= PARTS_TABLE[pi].iPrice)
                         ? Color::WHITE.Code() : Color(255, 80, 80).Code();
         DrawFormatString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 4, moneyCol,
                          "Wallet     $%d%s",
                          g_gameData.money,
-                         (g_gameData.money >= PARTS_TABLE[pi].price) ? "" : "  [NOT ENOUGH]");
+                         (g_gameData.money >= PARTS_TABLE[pi].iPrice) ? "" : "  [NOT ENOUGH]");
     }
 
     // Cannot-afford flash

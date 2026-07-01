@@ -42,7 +42,8 @@
     <ClInclude Include="header\resourceManager.h" />
     <ClInclude Include="header\const.h" />
     <ClInclude Include="header\share.h" />
-    <ClInclude Include="source\car_engine\car_engine.h" />
-    <ClInclude Include="source\car_meter\car_meter.h" />
+    <ClInclude Include="header\car_engine.h" />
+    <ClInclude Include="header\car_meter.h" />
+    <ClInclude Include="header\car_engine_data.h" />
   </ItemGroup>
 </Project>

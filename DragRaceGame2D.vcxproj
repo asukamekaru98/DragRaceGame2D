@@ -169,8 +169,9 @@
     <ClInclude Include="header\game_screen.h" />
     <ClInclude Include="header\car_data.h" />
     <ClInclude Include="header\result.h" />
-    <ClInclude Include="source\car_engine\car_engine.h" />
-    <ClInclude Include="source\car_meter\car_meter.h" />
+    <ClInclude Include="header\car_engine.h" />
+    <ClInclude Include="header\car_engine_data.h" />
+    <ClInclude Include="header\car_meter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,6 +1,8 @@
 #pragma once
 
-#include "../../header/car_data.h"
+#include "car_data.h"
+#include "car_engine_data.h"
+#include "typedef.h"
 
 class CarEngine {
 private:
@@ -12,5 +14,7 @@ private:
 	int iEquippedParts_[];
 
 public:
-	void Update(KeyInput input);
+	void Update(/*KeyInput input*/);
+	CarEngineData GetData();
+
 };

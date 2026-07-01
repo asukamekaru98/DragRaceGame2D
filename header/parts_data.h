@@ -1,5 +1,5 @@
 #pragma once
-#include "typedef.h"
+//#include "typedef.h"
 
 typedef enum {
     PARTS_CAT_ENGINE   = 0,
@@ -9,13 +9,20 @@ typedef enum {
     PARTS_CAT_COUNT    = 4,
 } PARTS_CATEGORY;
 
+typedef enum {
+    GAUGE_NONE,
+    GAUGE_TURBO,
+    GAUGE_OIL_TEMP,
+}GAUGE_TYPE;
+
 typedef struct {
-    const char*    name;
-    PARTS_CATEGORY category;
-    SI_4           price;
-    F_4            maxSpeedBonus;
-    F_4            accelBonus;
+    const char*     pName;
+    PARTS_CATEGORY  eCategory;
+    GAUGE_TYPE      eGaugeType;
+    int             iPrice;
+    float           fMaxSpeedBonus;
+    float           fAccelBonus;
 } PartsData;
 
-extern const PartsData PARTS_TABLE[];
-extern const SI_4      PARTS_TABLE_COUNT;
+extern const PartsData  PARTS_TABLE[];
+extern const int        PARTS_TABLE_COUNT;
