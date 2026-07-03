@@ -129,7 +129,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\car_engine\car_engine.cpp" />
+    <ClCompile Include="source\car_meter\carMeter.cpp" />
     <ClCompile Include="source\car_meter\car_meter.cpp" />
+    <ClCompile Include="source\car_meter\gauge_base.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\a.cpp" />
     <ClCompile Include="source\manager\resourceManager.cpp" />
@@ -151,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\const.h" />
+    <ClInclude Include="header\gauge_base.h" />
     <ClInclude Include="header\share.h" />
     <ClInclude Include="header\main.h" />
     <ClInclude Include="header\resourceManager.h" />

@@ -16,13 +16,38 @@ classDiagram
         -boostPressure_ F_4
         -carData_ CarData
         -equippedParts_ SI_4[]
-        +Update(input KeyInput) void
+        +Update(input GameKeyInput) void
         +GetData() CarEngineData
     }
 
     CarEngine ..> CarData       : uses
     CarEngine ..> PartsData     : tuned by
     CarEngine ..> CarEngineData : outputs
+    CarEngine ..> GameKeyInput  : reads
+
+    %% ===== 入力層 =====
+    class KeyInput {
+        <<abstract>>
+        -prevKeyState_ bool[256]
+        +Update()* void
+        #RefreshKeyState() void
+        #IsPressed(keyCode SI_4) bool
+        #IsTriggered(keyCode SI_4) bool
+    }
+
+    class GameKeyInput {
+        -isAccel_ bool
+        -isGearUpTriggered_ bool
+        -isGearDownTriggered_ bool
+        -isRetireTriggered_ bool
+        +Update() void
+        +IsAccel() bool
+        +IsGearUpTriggered() bool
+        +IsGearDownTriggered() bool
+        +IsRetireTriggered() bool
+    }
+
+    KeyInput <|-- GameKeyInput
 
     %% ===== メーター層 =====
     class GaugeBase {

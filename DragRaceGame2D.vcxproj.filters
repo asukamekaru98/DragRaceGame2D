@@ -21,6 +21,8 @@
     <ClCompile Include="source\share.cpp" />
     <ClCompile Include="source\car_engine\car_engine.cpp" />
     <ClCompile Include="source\car_meter\car_meter.cpp" />
+    <ClCompile Include="source\car_meter\gauge_base.cpp" />
+    <ClCompile Include="source\car_meter\carMeter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\main.h" />
@@ -45,5 +47,6 @@
     <ClInclude Include="header\car_engine.h" />
     <ClInclude Include="header\car_meter.h" />
     <ClInclude Include="header\car_engine_data.h" />
+    <ClInclude Include="header\gauge_base.h" />
   </ItemGroup>
 </Project>

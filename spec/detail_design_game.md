@@ -113,7 +113,29 @@ static float       s_waterTemp   = 60.0f;   // 水温 (℃)
 static float       s_raceTimer   = 0.0f;    // レース経過時間 (秒)
 static float       s_bgScrollX   = 0.0f;    // 背景スクロールX座標
 static float       s_cpuDistance = 0.0f;    // CPU走行距離 (m)
+static GameKeyInput s_gameKeyInput;         // ゲーム画面のキー入力（セクション5.8参照）
 ```
+
+### 5.8 キー入力（GameKeyInput）
+
+キー判定を`UpdateGame`に直接書くと責務が肥大化するため、キー入力の読み取りと意味付けは
+`GameKeyInput`クラス（`KeyInput`の派生クラス）に委譲する。
+
+- `KeyInput`（抽象基底クラス）：押下判定・トリガー判定（前フレームとの比較）という
+  画面共通のロジックのみを持つ。具体的にどのキーが何を意味するかは知らない。
+- `GameKeyInput`：`KeyInput`を継承し、Game画面固有の意味付け（アクセル/ギアチェンジ/リタイア）を行う。
+
+| GameKeyInputのメソッド | 対応する生キー | 意味 |
+|------------------------|----------------|------|
+| `IsAccel()` | `KEY_INPUT_Z` / `KEY_INPUT_UP`（押下） | アクセルON |
+| `IsGearUpTriggered()` | `KEY_INPUT_A`（トリガー） | ギアアップ |
+| `IsGearDownTriggered()` | `KEY_INPUT_D`（トリガー） | ギアダウン |
+| `IsRetireTriggered()` | `KEY_INPUT_ESCAPE`（トリガー） | リタイア |
+
+`UpdateGame`は毎フレーム`s_gameKeyInput.Update()`を呼んでキー状態を更新し、
+以降はgetterの結果だけを使う（生のキーコードやDxLibの`CheckHitKey`系関数を直接呼ばない）。
+
+詳細は[クラス図](uml/diagrams/class_diagram.mmd)を参照。
 
 ### 5.3 RPMの計算
 
@@ -157,11 +179,11 @@ s_distance += s_speed / 216.0f;
 ### 5.6 ギアチェンジ
 
 ```cpp
-if (IsKeyTriggered(KEY_INPUT_A) && s_gear < car->gearCount) {
+if (gameKeyInput.IsGearUpTriggered() && s_gear < car->gearCount) {
     s_gear++;
     s_rpm *= 0.7f;  // ギアアップでRPMを落とす
 }
-if (IsKeyTriggered(KEY_INPUT_D) && s_gear > 1) {
+if (gameKeyInput.IsGearDownTriggered() && s_gear > 1) {
     s_gear--;
     s_rpm *= 1.3f;  // ギアダウンでRPM上昇（レブリミット超えたらクリップ）
     if (s_rpm > 10000.0f) s_rpm = 10000.0f;
@@ -172,7 +194,7 @@ if (IsKeyTriggered(KEY_INPUT_D) && s_gear > 1) {
 
 ```cpp
 // アクセルON時に燃料消費・水温上昇
-if (IsKeyPressed(KEY_INPUT_Z) || IsKeyPressed(KEY_INPUT_UP)) {
+if (gameKeyInput.IsAccel()) {
     s_fuel     -= FUEL_CONSUMPTION;
     s_waterTemp += WATER_TEMP_RISE;
 }
@@ -300,15 +322,16 @@ void UpdateGame(void) {
         // タイマー更新
         s_raceTimer += 1.0f / FPS;
 
-        // アクセル入力
-        int accel = IsKeyPressed(KEY_INPUT_Z) || IsKeyPressed(KEY_INPUT_UP);
-        UpdatePlayerPhysics(accel);
+        // キー入力の更新（生キー読み取り→意味付けはGameKeyInputが担当）
+        s_gameKeyInput.Update();
+
+        UpdatePlayerPhysics(s_gameKeyInput.IsAccel());
         UpdateCpuPhysics();
         UpdateBackground();
 
         // ギアチェンジ入力
-        if (IsKeyTriggered(KEY_INPUT_A)) GearUp();
-        if (IsKeyTriggered(KEY_INPUT_D)) GearDown();
+        if (s_gameKeyInput.IsGearUpTriggered())   GearUp();
+        if (s_gameKeyInput.IsGearDownTriggered()) GearDown();
 
         // ゴール判定
         if (s_distance >= GOAL_DISTANCE) {
@@ -319,7 +342,7 @@ void UpdateGame(void) {
         }
 
         // リタイア
-        if (IsKeyTriggered(KEY_INPUT_ESCAPE)) {
+        if (s_gameKeyInput.IsRetireTriggered()) {
             g_gameData.lastRank = 2;  // リタイア = 負け扱い
             ChangeScreen(UpdateResult, DrawResult);
         }

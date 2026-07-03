@@ -5,6 +5,12 @@
 #include "typedef.h"
 
 class CarEngine {
+
+
+public:
+	void Update(/*KeyInput input*/) const;
+	CarEngineData GetData() const;
+
 private:
 	float fRPM_;
 	float fSpeed_;
@@ -12,9 +18,4 @@ private:
 	float fBoostPressure_;
 	CarData carData_;
 	int iEquippedParts_[];
-
-public:
-	void Update(/*KeyInput input*/);
-	CarEngineData GetData();
-
 };
