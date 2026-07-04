@@ -1,5 +1,5 @@
 ﻿#include "../DxLib/DxLib.h"
-#include "../header/title_resource.h"
+#include "title_resource.h"
 
 // タイトル/オープニングで共有する画像ハンドルの実体。
 // 読み込み・解放は TitleResource クラス（基底 ResourceManager）が行う。

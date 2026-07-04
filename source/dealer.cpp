@@ -1,11 +1,11 @@
 #include "../DxLib/DxLib.h"
-#include "../header/share.h"
-#include "../header/screen_manager.h"
-#include "../header/input.h"
-#include "../header/game_data.h"
-#include "../header/car_data.h"
-#include "../header/dealer.h"
-#include "../header/garage.h"
+#include "share.h"
+#include "screen_manager.h"
+#include "input.h"
+#include "game_data.h"
+#include "car_data.h"
+#include "dealer.h"
+#include "garage.h"
 #include <string.h>
 #include <stdio.h>
 

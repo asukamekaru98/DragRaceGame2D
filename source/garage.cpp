@@ -1,12 +1,12 @@
 #include "../DxLib/DxLib.h"
-#include "../header/share.h"
-#include "../header/screen_manager.h"
-#include "../header/input.h"
-#include "../header/game_data.h"
-#include "../header/garage.h"
-#include "../header/dealer.h"
-#include "../header/customize.h"
-#include "../header/game_screen.h"
+#include "share.h"
+#include "screen_manager.h"
+#include "input.h"
+#include "game_data.h"
+#include "garage.h"
+#include "dealer.h"
+#include "customize.h"
+#include "game_screen.h"
 #include <string.h>
 
 // ── Constants ────────────────────────────────────────────────

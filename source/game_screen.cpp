@@ -1,10 +1,10 @@
 #include "../DxLib/DxLib.h"
-#include "../header/share.h"
-#include "../header/screen_manager.h"
-#include "../header/input.h"
-#include "../header/game_screen.h"
-#include "../header/game_data.h"
-#include "../header/result.h"
+#include "share.h"
+#include "screen_manager.h"
+#include "input.h"
+#include "game_screen.h"
+#include "game_data.h"
+#include "result.h"
 
 #define WAIT_FRAMES 60   // 60fps * 1sec
 

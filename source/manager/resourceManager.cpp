@@ -1,5 +1,5 @@
 ﻿#include "../../DxLib/DxLib.h"
-#include "../../header/resourceManager.h"
+#include "resourceManager.h"
 
 void ResourceManager::LoadResources()
 {

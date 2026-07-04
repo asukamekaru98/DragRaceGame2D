@@ -1,11 +1,11 @@
 #include "../DxLib/DxLib.h"
-#include "../header/share.h"
-#include "../header/screen_manager.h"
-#include "../header/input.h"
-#include "../header/title_resource.h"
-#include "../header/title.h"
-#include "../header/garage.h"
-#include "../header/debug.h"
+#include "share.h"
+#include "screen_manager.h"
+#include "input.h"
+#include "title_resource.h"
+#include "title.h"
+#include "garage.h"
+#include "debug.h"
 
 #define SHUTTER_SPEED      8.0f
 #define BLINK_INTERVAL     30

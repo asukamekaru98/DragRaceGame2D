@@ -1,5 +1,5 @@
 #include "../DxLib/DxLib.h"
-#include "../header/input.h"
+#include "input.h"
 #include <string.h>
 
 static char s_prevKeys[256];

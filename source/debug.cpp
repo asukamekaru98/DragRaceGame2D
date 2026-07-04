@@ -1,10 +1,10 @@
 #include "../DxLib/DxLib.h"
-#include "../header/share.h"
-#include "../header/screen_manager.h"
-#include "../header/input.h"
-#include "../header/debug.h"
-#include "../header/title.h"
-#include "../header/car_data.h"
+#include "share.h"
+#include "screen_manager.h"
+#include "input.h"
+#include "debug.h"
+#include "title.h"
+#include "car_data.h"
 #include <string.h>
 #include <math.h>
 

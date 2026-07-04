@@ -23,30 +23,31 @@
     <ClCompile Include="source\car_meter\car_meter.cpp" />
     <ClCompile Include="source\car_meter\gauge_base.cpp" />
     <ClCompile Include="source\car_meter\carMeter.cpp" />
+    <ClCompile Include="source\input\key_input.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="header\main.h" />
-    <ClInclude Include="header\typedef.h" />
-    <ClInclude Include="header\screen_manager.h" />
-    <ClInclude Include="header\input.h" />
-    <ClInclude Include="header\title_resource.h" />
-    <ClInclude Include="header\opening.h" />
-    <ClInclude Include="header\title.h" />
-    <ClInclude Include="header\garage.h" />
-    <ClInclude Include="header\debug.h" />
-    <ClInclude Include="header\parts_data.h" />
-    <ClInclude Include="header\game_data.h" />
-    <ClInclude Include="header\dealer.h" />
-    <ClInclude Include="header\customize.h" />
-    <ClInclude Include="header\game_screen.h" />
-    <ClInclude Include="header\car_data.h" />
-    <ClInclude Include="header\result.h" />
-    <ClInclude Include="header\resourceManager.h" />
-    <ClInclude Include="header\const.h" />
-    <ClInclude Include="header\share.h" />
-    <ClInclude Include="header\car_engine.h" />
-    <ClInclude Include="header\car_meter.h" />
-    <ClInclude Include="header\car_engine_data.h" />
-    <ClInclude Include="header\gauge_base.h" />
+    <ClInclude Include="source\main.h" />
+    <ClInclude Include="source\typedef.h" />
+    <ClInclude Include="source\screen_manager.h" />
+    <ClInclude Include="source\input.h" />
+    <ClInclude Include="source\title_resource.h" />
+    <ClInclude Include="source\opening.h" />
+    <ClInclude Include="source\title.h" />
+    <ClInclude Include="source\garage.h" />
+    <ClInclude Include="source\debug.h" />
+    <ClInclude Include="source\parts_data.h" />
+    <ClInclude Include="source\game_data.h" />
+    <ClInclude Include="source\dealer.h" />
+    <ClInclude Include="source\customize.h" />
+    <ClInclude Include="source\game_screen.h" />
+    <ClInclude Include="source\car_data.h" />
+    <ClInclude Include="source\result.h" />
+    <ClInclude Include="source\manager\resourceManager.h" />
+    <ClInclude Include="source\const.h" />
+    <ClInclude Include="source\share.h" />
+    <ClInclude Include="source\car_engine\car_engine.h" />
+    <ClInclude Include="source\car_meter\car_meter.h" />
+    <ClInclude Include="source\car_engine\car_engine_data.h" />
+    <ClInclude Include="source\car_meter\gauge_base.h" />
   </ItemGroup>
 </Project>

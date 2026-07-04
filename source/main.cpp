@@ -1,13 +1,13 @@
 #include "../DxLib/DxLib.h"
-#include "../header/typedef.h"
-#include "../header/main.h"
-#include "../header/screen_manager.h"
-#include "../header/input.h"
-#include "../header/title_resource.h"
-#include "../header/opening.h"
-#include "../header/debug.h"
-#include "../header/game_data.h"
-#include "../header/const.h"
+#include "typedef.h"
+#include "main.h"
+#include "screen_manager.h"
+#include "input.h"
+#include "title_resource.h"
+#include "opening.h"
+#include "debug.h"
+#include "game_data.h"
+#include "const.h"
 
 static INIT_RESULT InitProgram(void) {
     ChangeWindowMode(TRUE);

@@ -1,5 +1,5 @@
 #include "../DxLib/DxLib.h"
-#include "../header/screen_manager.h"
+#include "screen_manager.h"
 
 ScreenManager g_screen = { NULL, NULL, NULL, NULL };
 

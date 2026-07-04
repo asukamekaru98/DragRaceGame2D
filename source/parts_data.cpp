@@ -1,4 +1,4 @@
-#include "../header/parts_data.h"
+#include "parts_data.h"
 
 const PartsData PARTS_TABLE[] = {
     // Engine

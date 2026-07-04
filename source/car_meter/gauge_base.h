@@ -1,6 +1,6 @@
 #pragma once
 
-#include "car_engine_data.h"
+#include "../car_engine/car_engine_data.h"
 
 class GaugeBase {
 public:

@@ -1,4 +1,4 @@
-#include "../header/share.h"
+#include "share.h"
 
 #include "../DxLib/DxLib.h"
 

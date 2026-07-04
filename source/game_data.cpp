@@ -1,5 +1,5 @@
 #include "../DxLib/DxLib.h"
-#include "../header/game_data.h"
+#include "game_data.h"
 #include <string.h>
 
 GameData g_gameData;

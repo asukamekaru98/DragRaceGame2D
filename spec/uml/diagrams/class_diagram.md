@@ -149,3 +149,4 @@ classDiagram
     }
 
     ResourceManager <|-- TitleResource
+```

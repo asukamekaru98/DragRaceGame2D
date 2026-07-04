@@ -1,10 +1,10 @@
 #include "../DxLib/DxLib.h"
-#include "../header/share.h"
-#include "../header/screen_manager.h"
-#include "../header/input.h"
-#include "../header/game_data.h"
-#include "../header/result.h"
-#include "../header/garage.h"
+#include "share.h"
+#include "screen_manager.h"
+#include "input.h"
+#include "game_data.h"
+#include "result.h"
+#include "garage.h"
 
 // ── Constants ────────────────────────────────────────────────
 #define RESULT_ITEM_COUNT   5

@@ -1,8 +1,8 @@
 #pragma once
-#include "../header/typedef.h"
+#include "typedef.h"
 
-// F‚ğ•\‚·’lƒIƒuƒWƒFƒNƒgBDxLib ‚Ì GetColor ‚ğ‰B•Á‚µA
-// •`‰æŒn‚É‚Í Code() ‚ª•Ô‚·ƒJƒ‰[ƒR[ƒh‚Ì‚İ‚ğ“n‚·B
+// ï¿½Fï¿½ï¿½\ï¿½ï¿½ï¿½lï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½BDxLib ï¿½ï¿½ GetColor ï¿½ï¿½ï¿½Bï¿½ï¿½ï¿½ï¿½ï¿½A
+// ï¿½`ï¿½ï¿½nï¿½É‚ï¿½ Code() ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½Jï¿½ï¿½ï¿½[ï¿½Rï¿½[ï¿½hï¿½Ì‚İ‚ï¿½nï¿½ï¿½ï¿½B
 class Color {
 public:
 	// constructor
@@ -10,7 +10,7 @@ public:
 
 	int Code() const;
 
-	// ƒF‚Ì–¼‘O•t‚«’è”‚ğ‹¤—Lƒƒ“ƒo‚Æ‚µ‚ÄéŒ¾
+	// ï¿½ï¿½ï¿½Fï¿½Ì–ï¿½ï¿½Oï¿½tï¿½ï¿½ï¿½è”ï¿½ï¿½ï¿½ï¿½ï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½oï¿½Æ‚ï¿½ï¿½ÄéŒ¾
 	static const Color RED;
 	static const Color GREEN;
 	static const Color BLUE;

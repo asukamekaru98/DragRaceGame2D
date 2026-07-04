@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "resourceManager.h"
+#include "manager/resourceManager.h"
 
 extern int g_hBg;
 extern int g_hShutter;
