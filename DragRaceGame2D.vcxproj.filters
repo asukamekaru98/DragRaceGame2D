@@ -49,5 +49,6 @@
     <ClInclude Include="source\car_meter\car_meter.h" />
     <ClInclude Include="source\car_engine\car_engine_data.h" />
     <ClInclude Include="source\car_meter\gauge_base.h" />
+    <ClInclude Include="source\input\key_input.h" />
   </ItemGroup>
 </Project>

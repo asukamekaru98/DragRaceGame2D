@@ -155,6 +155,7 @@
   <ItemGroup>
     <ClInclude Include="source\const.h" />
     <ClInclude Include="source\car_meter\gauge_base.h" />
+    <ClInclude Include="source\input\key_input.h" />
     <ClInclude Include="source\share.h" />
     <ClInclude Include="source\main.h" />
     <ClInclude Include="source\manager\resourceManager.h" />
