@@ -1,7 +1,8 @@
 #include "key_input.h"
 
-void KeyInput::Update() const {
-
+void KeyInput::Update() {
+	memcpy(s_prevKeys, s_currKeys, sizeof(s_currKeys));
+	GetHitKeyStateAll(s_currKeys);
 }
 
 void KeyInput::RefreshKeyState() const {

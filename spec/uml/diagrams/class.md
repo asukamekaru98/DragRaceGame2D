@@ -27,14 +27,6 @@ classDiagram
     CarEngine ..> GameKeyInput  : reads
 
     %% ===== 入力層 =====
-    class KeyInput {
-        <<abstract>>
-        -prevKeyState_ bool[256]
-        +Update()* void
-        #RefreshKeyState() void
-        #IsPressed(keyCode SI_4) bool
-        #IsTriggered(keyCode SI_4) bool
-    }
 
     class GameKeyInput {
         -isAccel_ bool
@@ -123,31 +115,4 @@ classDiagram
     PartsData --> GAUGE_TYPE
     PartsData --> PARTS_CATEGORY
 
-    %% ===== リソース層 =====
-    class ResourceManager {
-        <<abstract>>
-        +LoadResources() void
-        +UnloadResources() void
-        #GetResources()* RESOURCE_ITEM[]
-    }
-
-    class TitleResource {
-        -resources RESOURCE_ITEM[4]
-        #GetResources() RESOURCE_ITEM[]
-    }
-
-    class Color {
-        -r_ uchar
-        -g_ uchar
-        -b_ uchar
-        +Color(r, g, b)
-        +Code() int
-        +RED$ Color
-        +GREEN$ Color
-        +BLUE$ Color
-        +WHITE$ Color
-        +BLACK$ Color
-    }
-
-    ResourceManager <|-- TitleResource
 ```
