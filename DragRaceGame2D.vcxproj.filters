@@ -24,6 +24,7 @@
     <ClCompile Include="source\car_meter\gauge_base.cpp" />
     <ClCompile Include="source\car_meter\carMeter.cpp" />
     <ClCompile Include="source\input\key_input.cpp" />
+    <ClCompile Include="source\input\debug_input.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\main.h" />
@@ -50,5 +51,6 @@
     <ClInclude Include="source\car_engine\car_engine_data.h" />
     <ClInclude Include="source\car_meter\gauge_base.h" />
     <ClInclude Include="source\input\key_input.h" />
+    <ClInclude Include="source\input\debug_input.h" />
   </ItemGroup>
 </Project>

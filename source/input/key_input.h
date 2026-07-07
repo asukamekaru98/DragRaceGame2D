@@ -15,7 +15,7 @@ private:
 	bool bCurrKetState_[KEY_INPUT_KEY_COUNT];
 
 protected:
-	void RefreshKeyState() const;
-	bool IsPressed(const int iKeyCode) const;
-	bool IsTriggered(const int iKeyCode) const;
+	void RefreshKeyState();
+	bool IsPressed(const int iKeyCode);
+	bool IsTriggered(const int iKeyCode);
 };

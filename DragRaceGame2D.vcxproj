@@ -132,6 +132,7 @@
     <ClCompile Include="source\car_meter\carMeter.cpp" />
     <ClCompile Include="source\car_meter\car_meter.cpp" />
     <ClCompile Include="source\car_meter\gauge_base.cpp" />
+    <ClCompile Include="source\input\debug_input.cpp" />
     <ClCompile Include="source\input\key_input.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\a.cpp" />
@@ -155,6 +156,7 @@
   <ItemGroup>
     <ClInclude Include="source\const.h" />
     <ClInclude Include="source\car_meter\gauge_base.h" />
+    <ClInclude Include="source\input\debug_input.h" />
     <ClInclude Include="source\input\key_input.h" />
     <ClInclude Include="source\share.h" />
     <ClInclude Include="source\main.h" />
