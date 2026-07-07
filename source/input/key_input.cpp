@@ -5,14 +5,14 @@ void KeyInput::Update() {
 	GetHitKeyStateAll(s_currKeys);
 }
 
-void KeyInput::RefreshKeyState() const {
+void KeyInput::RefreshKeyState() {
 
 }
 
-bool KeyInput::IsPressed(int keyCode) const {
+bool KeyInput::IsPressed(int keyCode) {
 	return false;
 }
 
-bool KeyInput::IsTriggered(int keyCode) const {
+bool KeyInput::IsTriggered(int keyCode) {
 	return false;
 }

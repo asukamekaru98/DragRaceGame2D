@@ -6,7 +6,7 @@
 
 class KeyInput {	// abstract
 public:
-	void Update();
+	virtual void Update();
 
 private:
 	char s_prevKeys[KEY_INPUT_KEY_COUNT];
