@@ -44,25 +44,25 @@ typedef enum {
 } CUST_STATE;
 
 static CUST_STATE s_state         = CUST_STATE_TAB;
-static SI_4       s_categoryIndex = 0;
-static SI_4       s_partsIndex    = 0;   // index into s_filteredList
-static SI_4       s_filteredList[32];    // PARTS_TABLE indices; -1 = "(none)"
-static SI_4       s_filteredCount = 0;
-static SI_4       s_cursorPos     = 0;   // 0=Equip  1=Back
-static SI_4       s_cantAfford    = 0;
-static SI_4       s_hBg           = -1;
+static int        s_categoryIndex = 0;
+static int        s_partsIndex    = 0;   // index into s_filteredList
+static int        s_filteredList[32];    // PARTS_TABLE indices; -1 = "(none)"
+static int        s_filteredCount = 0;
+static int        s_cursorPos     = 0;   // 0=Equip  1=Back
+static int        s_cantAfford    = 0;
+static int        s_hBg           = -1;
 
 static const char* CAT_LABELS[PARTS_CAT_COUNT] = {
     "Engine", "Tire", "Body", "Exterior"
 };
 
 // ── Stats helpers ─────────────────────────────────────────────
-typedef struct { F_4 maxSpeed; F_4 accel; } CarStats;
+typedef struct { float maxSpeed; float accel; } CarStats;
 
 static CarStats CalcStats(const PlayerCar* car) {
     CarStats s = { car->maxSpeed, car->acceleration };
     for (int i = 0; i < PARTS_CAT_COUNT; i++) {
-        SI_4 pi = car->equippedParts[i];
+        int pi = car->equippedParts[i];
         if (pi >= 0) {
             s.maxSpeed += PARTS_TABLE[pi].fMaxSpeedBonus;
             s.accel    += PARTS_TABLE[pi].fAccelBonus;
@@ -71,10 +71,10 @@ static CarStats CalcStats(const PlayerCar* car) {
     return s;
 }
 
-static CarStats CalcPreviewStats(const PlayerCar* car, SI_4 previewPI) {
+static CarStats CalcPreviewStats(const PlayerCar* car, int previewPI) {
     PlayerCar tmp = *car;
     if (previewPI >= 0) {
-        SI_4 cat = (SI_4)PARTS_TABLE[previewPI].eCategory;
+        int cat = (int)PARTS_TABLE[previewPI].eCategory;
         tmp.equippedParts[cat] = previewPI;
     } else {
         // "(none)" selected — unequip current category
@@ -89,7 +89,7 @@ static void RebuildFilteredList(void) {
     // First entry is always "(none)" to allow unequipping
     s_filteredList[s_filteredCount++] = -1;
     for (int i = 0; i < PARTS_TABLE_COUNT; i++) {
-        if ((SI_4)PARTS_TABLE[i].eCategory == s_categoryIndex) {
+        if ((int)PARTS_TABLE[i].eCategory == s_categoryIndex) {
             s_filteredList[s_filteredCount++] = i;
         }
     }
@@ -97,7 +97,7 @@ static void RebuildFilteredList(void) {
 }
 
 // ── Equip ─────────────────────────────────────────────────────
-static void EquipParts(SI_4 pi) {
+static void EquipParts(int pi) {
     PlayerCar* car = &g_gameData.cars[g_gameData.selectedCarIndex];
     if (pi >= 0) {
         g_gameData.money -= PARTS_TABLE[pi].iPrice;
@@ -109,16 +109,16 @@ static void EquipParts(SI_4 pi) {
 }
 
 // ── Draw helpers ──────────────────────────────────────────────
-static void DrawStatBar(SI_4 x, SI_4 y, const char* label,
-                        F_4 cur, F_4 pre, F_4 maxVal) {
-    SI_4 curW = (SI_4)(cur / maxVal * BAR_MAX_W);
-    SI_4 preW = (SI_4)(pre / maxVal * BAR_MAX_W);
+static void DrawStatBar(int x, int y, const char* label,
+                        float cur, float pre, float maxVal) {
+    int curW = (int)(cur / maxVal * BAR_MAX_W);
+    int preW = (int)(pre / maxVal * BAR_MAX_W);
     if (curW > BAR_MAX_W) curW = BAR_MAX_W;
     if (preW > BAR_MAX_W) preW = BAR_MAX_W;
 
     DrawString(x, y, label, Color(200, 200, 200).Code());
 
-    SI_4 bx = x + 90;
+    int bx = x + 90;
 
     // Background track
     DrawFillBox(bx, y + 1, bx + BAR_MAX_W, y + BAR_H - 1, Color(50, 50, 50).Code());
@@ -141,7 +141,7 @@ static void DrawStatBar(SI_4 x, SI_4 y, const char* label,
 
     // Values
     if (pre != cur) {
-        SI_4 deltaCol = (pre > cur) ? Color(255, 220, 0).Code() : Color(255, 80, 80).Code();
+        int deltaCol = (pre > cur) ? Color(255, 220, 0).Code() : Color(255, 80, 80).Code();
         DrawFormatString(bx + BAR_MAX_W + 6, y, Color(200, 200, 200).Code(),
                          "%.0f", cur);
         DrawFormatString(bx + BAR_MAX_W + 46, y, deltaCol,
@@ -152,7 +152,7 @@ static void DrawStatBar(SI_4 x, SI_4 y, const char* label,
     }
 }
 
-static void DrawCarPlaceholder(SI_4 x, SI_4 y, SI_4 w, SI_4 h, const char* name) {
+static void DrawCarPlaceholder(int x, int y, int w, int h, const char* name) {
     DrawFillBox(x, y, x + w, y + h, Color(30, 35, 50).Code());
     DrawBox(x, y, x + w, y + h, Color(70, 80, 110).Code(), FALSE);
     // body
@@ -176,7 +176,7 @@ static void UnloadCustomizeResources(void) {
 
 // ── Screen functions ──────────────────────────────────────────
 void UpdateCustomize(void) {
-    static SI_4 s_initialized = 0;
+    static int s_initialized = 0;
     if (!s_initialized) {
         s_state         = CUST_STATE_TAB;
         s_categoryIndex = 0;
@@ -241,9 +241,9 @@ void UpdateCustomize(void) {
         }
         if (IsKeyTriggered(KEY_INPUT_Z) || IsKeyTriggered(KEY_INPUT_RETURN)) {
             if (s_cursorPos == 0) {
-                SI_4 pi = s_filteredList[s_partsIndex];
+                int pi = s_filteredList[s_partsIndex];
                 // free if unequipping or affordable
-                SI_4 cost = (pi >= 0) ? PARTS_TABLE[pi].iPrice : 0;
+                int cost = (pi >= 0) ? PARTS_TABLE[pi].iPrice : 0;
                 if (g_gameData.money >= cost) {
                     EquipParts(pi);
                     s_initialized = 0;
@@ -265,7 +265,7 @@ void UpdateCustomize(void) {
 
 void DrawCustomize(void) {
     PlayerCar* car = &g_gameData.cars[g_gameData.selectedCarIndex];
-    SI_4 pi = s_filteredList[s_partsIndex];   // -1 = "(none)"
+    int pi = s_filteredList[s_partsIndex];   // -1 = "(none)"
 
     // ── Background ───────────────────────────────────────────
     if (s_hBg >= 0) {
@@ -295,28 +295,28 @@ void DrawCustomize(void) {
 
     // ── Right: Category tabs ─────────────────────────────────
     for (int i = 0; i < PARTS_CAT_COUNT; i++) {
-        SI_4 isSel = (i == s_categoryIndex);
-        SI_4 isTab = (s_state == CUST_STATE_TAB);
-        SI_4 col;
+        int isSel = (i == s_categoryIndex);
+        int isTab = (s_state == CUST_STATE_TAB);
+        int col;
         if (isSel && isTab) col = Color::YELLOW.Code();
         else if (isSel)     col = Color(200, 200, 100).Code();
         else                col = Color(140, 140, 140).Code();
 
         DrawFormatString(TAB_X + i * TAB_W, TAB_Y, col,
                          "%s%s", isSel ? "[" : " ", CAT_LABELS[i]);
-        if (isSel) DrawFormatString(TAB_X + i * TAB_W + (SI_4)(strlen(CAT_LABELS[i]) * 8), TAB_Y, col, "]");
+        if (isSel) DrawFormatString(TAB_X + i * TAB_W + (int)(strlen(CAT_LABELS[i]) * 8), TAB_Y, col, "]");
     }
     DrawLine(TAB_X - 5, TAB_Y + 18, 790, TAB_Y + 18, Color(80, 80, 80).Code());
 
     // ── Right: Parts list ────────────────────────────────────
-    SI_4 equippedPI = car->equippedParts[s_categoryIndex];
+    int equippedPI = car->equippedParts[s_categoryIndex];
 
     for (int i = 0; i < s_filteredCount && i < LIST_MAX_SHOW; i++) {
-        SI_4 listPI  = s_filteredList[i];
-        SI_4 isSel   = (i == s_partsIndex);
-        SI_4 isEquip = (listPI == equippedPI) || (listPI == -1 && equippedPI == -1);
+        int listPI  = s_filteredList[i];
+        int isSel   = (i == s_partsIndex);
+        int isEquip = (listPI == equippedPI) || (listPI == -1 && equippedPI == -1);
 
-        SI_4 col;
+        int col;
         if (isSel && s_state == CUST_STATE_LIST) col = Color::YELLOW.Code();
         else if (isSel)                           col = Color(200, 200, 100).Code();
         else                                      col = Color(160, 160, 160).Code();
@@ -327,8 +327,8 @@ void DrawCustomize(void) {
                              isSel ? ">" : " ",
                              isEquip ? " [equipped]" : "");
         } else {
-            SI_4 affordable = (g_gameData.money >= PARTS_TABLE[listPI].iPrice);
-            SI_4 nameCol = affordable ? col : Color(120, 80, 80).Code();
+            int affordable = (g_gameData.money >= PARTS_TABLE[listPI].iPrice);
+            int nameCol = affordable ? col : Color(120, 80, 80).Code();
             DrawFormatString(LIST_X, LIST_Y + i * LIST_LINE_H, nameCol,
                              "%s %-18s $%-5d%s",
                              isSel ? ">" : " ",
@@ -357,7 +357,7 @@ void DrawCustomize(void) {
                          Color(255, 220, 80).Code(),
                          "Price      $%d", PARTS_TABLE[pi].iPrice);
 
-        SI_4 moneyCol = (g_gameData.money >= PARTS_TABLE[pi].iPrice)
+        int moneyCol = (g_gameData.money >= PARTS_TABLE[pi].iPrice)
                         ? Color::WHITE.Code() : Color(255, 80, 80).Code();
         DrawFormatString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 4, moneyCol,
                          "Wallet     $%d%s",
@@ -372,9 +372,9 @@ void DrawCustomize(void) {
     }
 
     // ── Buttons ──────────────────────────────────────────────
-    SI_4 showMenu = (s_state == CUST_STATE_MENU);
-    SI_4 equipCol = (showMenu && s_cursorPos == 0) ? Color::YELLOW.Code() : Color(130, 130, 130).Code();
-    SI_4 backCol  = (showMenu && s_cursorPos == 1) ? Color::YELLOW.Code() : Color(130, 130, 130).Code();
+    int showMenu = (s_state == CUST_STATE_MENU);
+    int equipCol = (showMenu && s_cursorPos == 0) ? Color::YELLOW.Code() : Color(130, 130, 130).Code();
+    int backCol  = (showMenu && s_cursorPos == 1) ? Color::YELLOW.Code() : Color(130, 130, 130).Code();
 
     if (showMenu) {
         if (s_cursorPos == 0)

@@ -32,27 +32,27 @@ typedef enum {
 } DEALER_STATE;
 
 static DEALER_STATE s_state      = DEALER_STATE_CARD;
-static SI_4         s_carIndex   = 0;
-static F_4          s_scrollX    = 0.0f;
-static F_4          s_targetX    = 0.0f;
-static SI_4         s_cursorPos  = 0;       // 0=Buy  1=Back
-static SI_4         s_cantAfford = 0;       // flash timer for "cannot afford"
-static SI_4         s_hBg        = -1;
-static SI_4         s_hSprites[16];         // sprite handles per CAR_TABLE entry
+static int          s_carIndex   = 0;
+static float        s_scrollX    = 0.0f;
+static float        s_targetX    = 0.0f;
+static int          s_cursorPos  = 0;       // 0=Buy  1=Back
+static int          s_cantAfford = 0;       // flash timer for "cannot afford"
+static int          s_hBg        = -1;
+static int          s_hSprites[16];         // sprite handles per CAR_TABLE entry
 
 // ── Helpers ──────────────────────────────────────────────────
-static SI_4 CanAfford(SI_4 idx) {
+static int CanAfford(int idx) {
     return g_gameData.money >= CAR_TABLE[idx].price;
 }
 
-static SI_4 AlreadyOwned(SI_4 idx) {
+static int AlreadyOwned(int idx) {
     for (int i = 0; i < g_gameData.carCount; i++) {
         if (strcmp(g_gameData.cars[i].name, CAR_TABLE[idx].name) == 0) return 1;
     }
     return 0;
 }
 
-static void BuyCar(SI_4 idx) {
+static void BuyCar(int idx) {
     if (g_gameData.carCount >= MAX_GARAGE_CARS) return;
 
     g_gameData.money -= CAR_TABLE[idx].price;
@@ -70,11 +70,11 @@ static void BuyCar(SI_4 idx) {
 }
 
 // Draw a car card (placeholder if no sprite loaded)
-static void DrawCard(SI_4 cardX, SI_4 cardY, SI_4 idx, SI_4 selected) {
+static void DrawCard(int cardX, int cardY, int idx, int selected) {
     const CarData* car = &CAR_TABLE[idx];
 
     // Card body
-    SI_4 bgCol = selected ? Color(50, 50, 70).Code() : Color(30, 30, 40).Code();
+    int bgCol = selected ? Color(50, 50, 70).Code() : Color(30, 30, 40).Code();
     DrawFillBox(cardX, cardY, cardX + CARD_WIDTH, cardY + CARD_HEIGHT, bgCol);
 
     // Sprite or placeholder silhouette
@@ -84,8 +84,8 @@ static void DrawCard(SI_4 cardX, SI_4 cardY, SI_4 idx, SI_4 selected) {
                         s_hSprites[idx], TRUE);
     } else {
         // Simple silhouette
-        SI_4 sx = cardX + 15, sy = cardY + 20;
-        SI_4 sw = CARD_WIDTH - 30, sh = CARD_HEIGHT - 50;
+        int sx = cardX + 15, sy = cardY + 20;
+        int sw = CARD_WIDTH - 30, sh = CARD_HEIGHT - 50;
         DrawFillBox(sx,          sy + sh / 3, sx + sw,      sy + sh,     Color(80, 100, 140).Code());
         DrawFillBox(sx + sw / 4, sy,          sx + sw * 3/4, sy + sh / 2, Color(110, 130, 170).Code());
         DrawFillBox(sx + 5,      sy + sh - 8, sx + 25,      sy + sh + 5, Color(30, 30, 30).Code());
@@ -107,14 +107,14 @@ static void DrawCard(SI_4 cardX, SI_4 cardY, SI_4 idx, SI_4 selected) {
     }
 
     // Border (bright yellow for selected)
-    SI_4 borderCol = selected ? Color::YELLOW.Code() : Color(80, 80, 100).Code();
+    int borderCol = selected ? Color::YELLOW.Code() : Color(80, 80, 100).Code();
     DrawBox(cardX, cardY, cardX + CARD_WIDTH, cardY + CARD_HEIGHT, borderCol, FALSE);
 
     // Car name
     DrawString(cardX + 5, cardY + CARD_HEIGHT - 22, car->name, Color(220, 220, 220).Code());
 
     // Price below card
-    SI_4 priceCol = CanAfford(idx) ? Color(255, 220, 80).Code() : Color(160, 80, 80).Code();
+    int priceCol = CanAfford(idx) ? Color(255, 220, 80).Code() : Color(160, 80, 80).Code();
     DrawFormatString(cardX + 5, cardY + CARD_HEIGHT + 6, priceCol, "$%d", car->price);
 }
 
@@ -138,7 +138,7 @@ static void UnloadDealerResources(void) {
 
 // ── Screen functions ──────────────────────────────────────────
 void UpdateDealer(void) {
-    static SI_4 s_initialized = 0;
+    static int s_initialized = 0;
     if (!s_initialized) {
         s_state     = DEALER_STATE_CARD;
         s_carIndex  = 0;
@@ -161,11 +161,11 @@ void UpdateDealer(void) {
     case DEALER_STATE_CARD:
         if (IsKeyTriggered(KEY_INPUT_LEFT)) {
             s_carIndex = (s_carIndex - 1 + CAR_TABLE_COUNT) % CAR_TABLE_COUNT;
-            s_targetX  = -(F_4)(s_carIndex * CARD_STEP);
+            s_targetX  = -(float)(s_carIndex * CARD_STEP);
         }
         if (IsKeyTriggered(KEY_INPUT_RIGHT)) {
             s_carIndex = (s_carIndex + 1) % CAR_TABLE_COUNT;
-            s_targetX  = -(F_4)(s_carIndex * CARD_STEP);
+            s_targetX  = -(float)(s_carIndex * CARD_STEP);
         }
         if (IsKeyTriggered(KEY_INPUT_Z) || IsKeyTriggered(KEY_INPUT_RETURN)) {
             s_state     = DEALER_STATE_MENU;
@@ -221,9 +221,9 @@ void DrawDealer(void) {
 
     // ── Card row ─────────────────────────────────────────────
     // Cards are centered: selected card center = screen center (400)
-    SI_4 centerX = 400 - CARD_WIDTH / 2;
+    int centerX = 400 - CARD_WIDTH / 2;
     for (int i = 0; i < CAR_TABLE_COUNT; i++) {
-        SI_4 cardX = centerX + (SI_4)s_scrollX + i * CARD_STEP;
+        int cardX = centerX + (int)s_scrollX + i * CARD_STEP;
         // Cull cards that are fully off-screen
         if (cardX + CARD_WIDTH < 0 || cardX > 800) continue;
         DrawCard(cardX, CARD_Y, i, (i == s_carIndex));
@@ -240,7 +240,7 @@ void DrawDealer(void) {
     // ── Detail panel ─────────────────────────────────────────
     // Acceleration stars (0.0-5.0 → 0-5 stars)
     char stars[8] = { 0 };
-    SI_4 fullStars = (SI_4)(car->acceleration + 0.5f);
+    int fullStars = (int)(car->acceleration + 0.5f);
     for (int i = 0; i < 5; i++) stars[i] = (i < fullStars) ? '*' : '-';
 
     DrawFormatString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 0,
@@ -254,7 +254,7 @@ void DrawDealer(void) {
     DrawFormatString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 4,
                      Color(255, 220, 80).Code(),  "Price     : $%d", car->price);
 
-    SI_4 moneyCol = CanAfford(s_carIndex) ? Color::WHITE.Code() : Color(255, 80, 80).Code();
+    int moneyCol = CanAfford(s_carIndex) ? Color::WHITE.Code() : Color(255, 80, 80).Code();
     DrawFormatString(DETAIL_X, DETAIL_Y + DETAIL_LINE * 5, moneyCol,
                      "Wallet    : $%d%s",
                      g_gameData.money,
@@ -268,8 +268,8 @@ void DrawDealer(void) {
 
     // ── Buttons ──────────────────────────────────────────────
     if (s_state == DEALER_STATE_MENU) {
-        SI_4 buyCol  = (s_cursorPos == 0) ? Color::YELLOW.Code() : Color(180, 180, 180).Code();
-        SI_4 backCol = (s_cursorPos == 1) ? Color::YELLOW.Code() : Color(180, 180, 180).Code();
+        int buyCol  = (s_cursorPos == 0) ? Color::YELLOW.Code() : Color(180, 180, 180).Code();
+        int backCol = (s_cursorPos == 1) ? Color::YELLOW.Code() : Color(180, 180, 180).Code();
 
         // Highlight box on selected button
         if (s_cursorPos == 0) DrawBox(BTN_BUY_X  - 5, BTN_Y - 4, BTN_BUY_X  + 85, BTN_Y + 20, Color::YELLOW.Code(), FALSE);

@@ -21,25 +21,25 @@
 #define PRIZE_LOSE           200
 
 // ── State ────────────────────────────────────────────────────
-static F_4  s_itemAlpha[RESULT_ITEM_COUNT];
-static SI_4 s_currentItem;
-static SI_4 s_waitTimer;
-static SI_4 s_allShown;
-static SI_4 s_blinkTimer;
-static SI_4 s_isBestUpdated;
-static SI_4 s_prize;
-static SI_4 s_hBg = -1;
+static float s_itemAlpha[RESULT_ITEM_COUNT];
+static int s_currentItem;
+static int s_waitTimer;
+static int s_allShown;
+static int s_blinkTimer;
+static int s_isBestUpdated;
+static int s_prize;
+static int s_hBg = -1;
 
 // ── Helpers ──────────────────────────────────────────────────
-static SI_4 CalcPrize(SI_4 rank, F_4 raceTime) {
+static int CalcPrize(int rank, float raceTime) {
     if (rank == 1) {
-        SI_4 bonus = (raceTime > 0.0f) ? (SI_4)(PRIZE_TIME_BONUS_BASE / raceTime) : 0;
+        int bonus = (raceTime > 0.0f) ? (int)(PRIZE_TIME_BONUS_BASE / raceTime) : 0;
         return PRIZE_WIN_BASE + bonus;
     }
     return PRIZE_LOSE;
 }
 
-static void FormatTime(F_4 t, int* min, int* sec, int* msec) {
+static void FormatTime(float t, int* min, int* sec, int* msec) {
     *min  = (int)(t / 60.0f);
     *sec  = (int)(t) % 60;
     *msec = (int)((t - (int)t) * 100);
@@ -66,7 +66,7 @@ static void UpdateResultFade(void) {
 
 // ── Screen functions ──────────────────────────────────────────
 void UpdateResult(void) {
-    static SI_4 s_initialized = 0;
+    static int s_initialized = 0;
     if (!s_initialized) {
         for (int i = 0; i < RESULT_ITEM_COUNT; i++) s_itemAlpha[i] = 0.0f;
         s_currentItem   = 0;

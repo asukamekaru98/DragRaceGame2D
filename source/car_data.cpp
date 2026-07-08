@@ -8,4 +8,4 @@ const CarData CAR_TABLE[] = {
     { "SUPER COUPE",   300.0f,   4.0f,  6,     6000 },
     { "HYPER GT",      340.0f,   5.0f,  6,    12000 },
 };
-const SI_4 CAR_TABLE_COUNT = (SI_4)(sizeof(CAR_TABLE) / sizeof(CAR_TABLE[0]));
+const int CAR_TABLE_COUNT = (int)(sizeof(CAR_TABLE) / sizeof(CAR_TABLE[0]));

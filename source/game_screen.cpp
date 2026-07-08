@@ -8,10 +8,10 @@
 
 #define WAIT_FRAMES 60   // 60fps * 1sec
 
-static SI_4 s_timer = 0;
+static int s_timer = 0;
 
 void UpdateGame(void) {
-    static SI_4 s_initialized = 0;
+    static int s_initialized = 0;
     if (!s_initialized) {
         s_timer = 0;
         s_initialized = 1;

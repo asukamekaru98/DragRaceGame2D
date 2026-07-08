@@ -9,18 +9,6 @@ typedef unsigned long long	ulong2;
 
 typedef std::string			str;
 
-// 旧型エイリアス（既存ソースが使用中のため併存）
-typedef char				SC_1;
-typedef unsigned char		UC_1;
-typedef signed short		SI_2;
-typedef unsigned short		UI_2;
-typedef signed int			SI_4;
-typedef unsigned int		UI_4;
-typedef signed long long	SI_8;
-typedef unsigned long long	UI_8;
-typedef float				F_4;
-typedef double				D_8;
-
 typedef enum {
 	INIT_RESULT_ERROR		= -1,
 	INIT_RESULT_SUCCESS		= 1,

@@ -1,21 +1,19 @@
 #pragma once
-#include "../../DxLib/DxLib.h"
-#include <string.h>
 
 #define KEY_INPUT_KEY_COUNT 256
 
 class KeyInput {	// abstract
 public:
-	virtual void Update();
+	KeyInput();
+	virtual ~KeyInput();
+	virtual void Update() = 0;
 
 private:
-	char s_prevKeys[KEY_INPUT_KEY_COUNT];
-	char s_currKeys[KEY_INPUT_KEY_COUNT];
-	bool bPrevKetState_[KEY_INPUT_KEY_COUNT];
-	bool bCurrKetState_[KEY_INPUT_KEY_COUNT];
+	char cPrevKeyState_[KEY_INPUT_KEY_COUNT];
+	char cCurrKeyState_[KEY_INPUT_KEY_COUNT];
 
 protected:
 	void RefreshKeyState();
-	bool IsPressed(const int iKeyCode);
-	bool IsTriggered(const int iKeyCode);
+	bool IsPressed(const int iKeyCode) const;
+	bool IsTriggered(const int iKeyCode) const;
 };
