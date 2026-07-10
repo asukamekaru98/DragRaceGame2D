@@ -17,3 +17,7 @@ protected:
 	bool IsPressed(const int iKeyCode) const;
 	bool IsTriggered(const int iKeyCode) const;
 };
+
+// マージテスト用のコメント1
+
+// マージテスト用のコメント2
