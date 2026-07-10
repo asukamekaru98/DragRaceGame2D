@@ -72,3 +72,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     DxLib_End();
     return 0;
 }
+
+// マージテスト1 main
+
+// マージテスト2 main
