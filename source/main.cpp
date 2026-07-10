@@ -76,3 +76,5 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 // マージテスト1 main
 
 // マージテスト2 main
+
+// マージテスト3 main
