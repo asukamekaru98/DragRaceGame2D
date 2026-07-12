@@ -38,8 +38,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     titleResource.LoadResources();
 
 # if 1
-    g_screen.update     = UpdateOpening;
-    g_screen.draw       = DrawOpening;
+	g_screen.updateInput = g_ScreenFuncs[SCREEN_OPENING].updateInput;
+    g_screen.update     = g_ScreenFuncs[SCREEN_OPENING].update;
+    g_screen.draw       = g_ScreenFuncs[SCREEN_OPENING].draw;
     g_screen.nextUpdate = NULL;
     g_screen.nextDraw   = NULL;
 #else
@@ -71,3 +72,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     DxLib_End();
     return 0;
 }
+
+// マージテスト1 main
+
+// マージテスト2 main
+
+// マージテスト3 main

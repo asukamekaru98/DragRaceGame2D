@@ -7,8 +7,7 @@ KeyInput::KeyInput() {
 	memset(cCurrKeyState_, 0, sizeof(cCurrKeyState_));
 }
 
-KeyInput::~KeyInput() {
-}
+KeyInput::~KeyInput() {}
 
 void KeyInput::RefreshKeyState() {
 	memcpy(cPrevKeyState_, cCurrKeyState_, sizeof(cCurrKeyState_));
