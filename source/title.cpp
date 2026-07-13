@@ -1,7 +1,7 @@
 #include "../DxLib/DxLib.h"
 #include "share.h"
 #include "screen_manager.h"
-#include "input.h"
+#include "input/title_input.h"
 #include "title_resource.h"
 #include "title.h"
 #include "garage.h"
@@ -28,6 +28,7 @@ typedef enum {
 static TITLE_STATE s_state      = TITLE_STATE_WAIT;
 static float       s_shutterY   = 0.0f;
 static int         s_blinkTimer = 0;
+static TitleInput  s_input;
 
 static void ResetTitle(void) {
     s_state      = TITLE_STATE_WAIT;
@@ -35,10 +36,15 @@ static void ResetTitle(void) {
     s_blinkTimer = 0;
 }
 
+void UpdateTitleInput(void) {
+    s_input.Update();
+}
+
 void UpdateTitle(void) {
     static int s_initialized = 0;
     if (!s_initialized) {
         ResetTitle();
+        s_input.Update();   // re-sync: suppress false triggers from keys held across screens
         s_initialized = 1;
     }
 
@@ -48,17 +54,17 @@ void UpdateTitle(void) {
         s_blinkTimer++;
 
 #ifdef _DEBUG
-        if (IsKeyTriggered(KEY_INPUT_F1)) {
+        if (s_input.IsDebugMenuTriggered()) {
             s_initialized = 0;
-            ChangeScreen(UpdateDebugMenu, DrawDebugMenu);
+            ChangeScreen(UpdateDebugRawInput, UpdateDebugMenu, DrawDebugMenu);
             return;
-        } else if (IsKeyTriggered(KEY_INPUT_F2)) {
+        } else if (s_input.IsMeterTriggered()) {
             s_initialized = 0;
-            ChangeScreen(UpdateDebugMeter, DrawDebugMeter);
+            ChangeScreen(UpdateDebugMeterInput, UpdateDebugMeter, DrawDebugMeter);
             return;
         }
 #endif
-        if (CheckHitKeyAll(DX_CHECKINPUT_ALL) != 0) {
+        if (s_input.IsAnyInputPressed()) {
             s_state = TITLE_STATE_SHUTTER_UP;
         }
         break;
@@ -67,7 +73,7 @@ void UpdateTitle(void) {
         s_shutterY -= SHUTTER_SPEED;
         if (s_shutterY <= -600.0f) {
             s_initialized = 0;
-            ChangeScreen(UpdateGarage, DrawGarage);
+            ChangeScreen(UpdateGarageInput, UpdateGarage, DrawGarage);
         }
         break;
     }

@@ -33,20 +33,21 @@ msbuild DragRaceGame2D.sln /p:Configuration=Debug /p:Platform=x64
 画面は「UpdateInput / Update / Draw の関数ポインタ3点セット」で表現される。
 
 - `g_screen`(ScreenManager構造体のグローバル)が現在画面の関数ポインタを保持
-- `g_ScreenFuncs[]` が `SCREEN_NAME` 列挙(SCREEN_OPENING, SCREEN_TITLE, SCREEN_GARAGE, SCREEN_DEBUG_* ...)に対応する関数テーブル
-- 画面遷移は各画面のUpdate内から `ChangeScreen(update, draw)` を呼んで `next*` に予約し、main.cppのメインループ末尾でフレーム境界に反映される
-- メインループ: `ProcessMessage` → `ClearDrawScreen` → `UpdateInput()` → `g_screen.update()` → `g_screen.draw()` → 遷移反映 → `ScreenFlip`
+- `g_ScreenFuncs[]`(実体は screen_manager.cpp)が `SCREEN_NAME` 列挙(SCREEN_OPENING〜SCREEN_RESULT、`_DEBUG` 時は SCREEN_DEBUG_* も)に対応する関数テーブル。キー入力を持たない画面(オープニング、ゲーム)の updateInput は NULL
+- 画面遷移は各画面のUpdate内から `ChangeScreen(updateInput, update, draw)` を呼んで `next*` に予約し、main.cppのメインループ末尾でフレーム境界に反映される
+- メインループ: `ProcessMessage` → `ClearDrawScreen` → `g_screen.updateInput()`(NULLならスキップ) → `g_screen.update()` → `g_screen.draw()` → 遷移反映 → `ScreenFlip`
 
 ### データ共有
 
 画面間のデータ共有はグローバル変数(`g_gameData` in source/game_data.h)。グローバルは `g_` プレフィクス、画像ハンドルは `g_hXxx`。
 
-### 入力処理(過渡期・2系統が混在)
+### 入力処理(クラス型に統一済み)
 
-- 手続き型: `source/input.cpp` / `input.h` — `UpdateInput()` / `IsKeyTriggered()` / `IsKeyPressed()`。main.cpp が現在使用しているのはこちら
-- クラス型: `source/input/key_input.h` — 抽象クラス `KeyInput`(`RefreshKeyState` / `IsPressed` / `IsTriggered`)。UML上は `GameKeyInput` 派生を予定しているが未実装
-
-新規コードを書く際はどちらの系統に寄せるべきか、直近のコミット方針(クラス型への移行中)を確認すること。
+- 抽象基底 `source/input/key_input.h` — `KeyInput`(`RefreshKeyState` / `IsPressed` / `IsTriggered` は protected)。派生クラスが `Update()` で意味付けフラグを更新し、const getter を公開する
+- 画面ごとの派生クラス(source/input/ 配下): `TitleInput` / `GarageInput` / `DealerInput` / `CustomizeInput` / `ResultInput`。デバッグ用に `DebugInput`(メーター画面)と `DebugRawInput`(生キー公開、デバッグサンプル3画面共用)
+- 各画面 .cpp が static インスタンスと `UpdateXxxInput()` を持ち、メインループから `g_screen.updateInput()` 経由で毎フレーム呼ばれる
+- 画面突入時の init ブロックで `s_input.Update()` をもう一度呼んでいる — 画面をまたいで押しっぱなしのキーがトリガー誤発火するのを防ぐため。削除しないこと
+- 旧手続き型 `input.cpp`/`input.h` は削除済み。UML上の `GameKeyInput` はゲーム画面のレースロジック実装時に追加予定(未実装)
 
 ### その他の構造
 

@@ -1,7 +1,7 @@
 #include "../DxLib/DxLib.h"
 #include "share.h"
 #include "screen_manager.h"
-#include "input.h"
+#include "input/result_input.h"
 #include "game_data.h"
 #include "result.h"
 #include "garage.h"
@@ -29,6 +29,7 @@ static int s_blinkTimer;
 static int s_isBestUpdated;
 static int s_prize;
 static int s_hBg = -1;
+static ResultInput s_input;
 
 // ── Helpers ──────────────────────────────────────────────────
 static int CalcPrize(int rank, float raceTime) {
@@ -65,6 +66,10 @@ static void UpdateResultFade(void) {
 }
 
 // ── Screen functions ──────────────────────────────────────────
+void UpdateResultInput(void) {
+    s_input.Update();
+}
+
 void UpdateResult(void) {
     static int s_initialized = 0;
     if (!s_initialized) {
@@ -86,6 +91,7 @@ void UpdateResult(void) {
         }
 
         s_hBg = LoadGraph("resource/result/bg_result.png");
+        s_input.Update();   // re-sync: suppress false triggers from keys held across screens
         s_initialized = 1;
     }
 
@@ -94,10 +100,10 @@ void UpdateResult(void) {
     if (s_allShown) {
         s_blinkTimer++;
 
-        if (CheckHitKeyAll(DX_CHECKINPUT_ALL) != 0) {
+        if (s_input.IsAnyInputPressed()) {
             if (s_hBg >= 0) { DeleteGraph(s_hBg); s_hBg = -1; }
             s_initialized = 0;
-            ChangeScreen(UpdateGarage, DrawGarage);
+            ChangeScreen(UpdateGarageInput, UpdateGarage, DrawGarage);
         }
     }
 }

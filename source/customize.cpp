@@ -1,7 +1,7 @@
 #include "../DxLib/DxLib.h"
 #include "share.h"
 #include "screen_manager.h"
-#include "input.h"
+#include "input/customize_input.h"
 #include "game_data.h"
 #include "parts_data.h"
 #include "customize.h"
@@ -51,6 +51,7 @@ static int        s_filteredCount = 0;
 static int        s_cursorPos     = 0;   // 0=Equip  1=Back
 static int        s_cantAfford    = 0;
 static int        s_hBg           = -1;
+static CustomizeInput s_input;
 
 static const char* CAT_LABELS[PARTS_CAT_COUNT] = {
     "Engine", "Tire", "Body", "Exterior"
@@ -175,6 +176,10 @@ static void UnloadCustomizeResources(void) {
 }
 
 // ── Screen functions ──────────────────────────────────────────
+void UpdateCustomizeInput(void) {
+    s_input.Update();
+}
+
 void UpdateCustomize(void) {
     static int s_initialized = 0;
     if (!s_initialized) {
@@ -184,6 +189,7 @@ void UpdateCustomize(void) {
         s_cantAfford    = 0;
         RebuildFilteredList();
         LoadCustomizeResources();
+        s_input.Update();   // re-sync: suppress false triggers from keys held across screens
         s_initialized   = 1;
     }
 
@@ -193,53 +199,53 @@ void UpdateCustomize(void) {
 
     // ── Category tab ────────────────────────────────────────
     case CUST_STATE_TAB:
-        if (IsKeyTriggered(KEY_INPUT_LEFT)) {
+        if (s_input.IsLeftTriggered()) {
             s_categoryIndex = (s_categoryIndex - 1 + PARTS_CAT_COUNT) % PARTS_CAT_COUNT;
             RebuildFilteredList();
         }
-        if (IsKeyTriggered(KEY_INPUT_RIGHT)) {
+        if (s_input.IsRightTriggered()) {
             s_categoryIndex = (s_categoryIndex + 1) % PARTS_CAT_COUNT;
             RebuildFilteredList();
         }
-        if (IsKeyTriggered(KEY_INPUT_DOWN)) {
+        if (s_input.IsDownTriggered()) {
             s_state = CUST_STATE_LIST;
         }
-        if (IsKeyTriggered(KEY_INPUT_X) || IsKeyTriggered(KEY_INPUT_ESCAPE)) {
+        if (s_input.IsCancelTriggered()) {
             s_initialized = 0;
             UnloadCustomizeResources();
-            ChangeScreen(UpdateGarage, DrawGarage);
+            ChangeScreen(UpdateGarageInput, UpdateGarage, DrawGarage);
         }
         break;
 
     // ── Parts list ──────────────────────────────────────────
     case CUST_STATE_LIST:
-        if (IsKeyTriggered(KEY_INPUT_UP)) {
+        if (s_input.IsUpTriggered()) {
             if (s_partsIndex == 0) {
                 s_state = CUST_STATE_TAB;
             } else {
                 s_partsIndex--;
             }
         }
-        if (IsKeyTriggered(KEY_INPUT_DOWN)) {
+        if (s_input.IsDownTriggered()) {
             if (s_partsIndex < s_filteredCount - 1) s_partsIndex++;
         }
-        if (IsKeyTriggered(KEY_INPUT_Z) || IsKeyTriggered(KEY_INPUT_RETURN)) {
+        if (s_input.IsDecideTriggered()) {
             s_state     = CUST_STATE_MENU;
             s_cursorPos = 0;
         }
-        if (IsKeyTriggered(KEY_INPUT_X) || IsKeyTriggered(KEY_INPUT_ESCAPE)) {
+        if (s_input.IsCancelTriggered()) {
             s_initialized = 0;
             UnloadCustomizeResources();
-            ChangeScreen(UpdateGarage, DrawGarage);
+            ChangeScreen(UpdateGarageInput, UpdateGarage, DrawGarage);
         }
         break;
 
     // ── Equip / Back ─────────────────────────────────────────
     case CUST_STATE_MENU:
-        if (IsKeyTriggered(KEY_INPUT_LEFT) || IsKeyTriggered(KEY_INPUT_RIGHT)) {
+        if (s_input.IsLeftTriggered() || s_input.IsRightTriggered()) {
             s_cursorPos = 1 - s_cursorPos;
         }
-        if (IsKeyTriggered(KEY_INPUT_Z) || IsKeyTriggered(KEY_INPUT_RETURN)) {
+        if (s_input.IsDecideTriggered()) {
             if (s_cursorPos == 0) {
                 int pi = s_filteredList[s_partsIndex];
                 // free if unequipping or affordable
@@ -248,7 +254,7 @@ void UpdateCustomize(void) {
                     EquipParts(pi);
                     s_initialized = 0;
                     UnloadCustomizeResources();
-                    ChangeScreen(UpdateGarage, DrawGarage);
+                    ChangeScreen(UpdateGarageInput, UpdateGarage, DrawGarage);
                 } else {
                     s_cantAfford = 90;
                 }
@@ -256,7 +262,7 @@ void UpdateCustomize(void) {
                 s_state = CUST_STATE_LIST;
             }
         }
-        if (IsKeyTriggered(KEY_INPUT_X) || IsKeyTriggered(KEY_INPUT_ESCAPE)) {
+        if (s_input.IsCancelTriggered()) {
             s_state = CUST_STATE_LIST;
         }
         break;

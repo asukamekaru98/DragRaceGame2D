@@ -2,7 +2,6 @@
 #include "typedef.h"
 #include "main.h"
 #include "screen_manager.h"
-#include "input.h"
 #include "title_resource.h"
 #include "opening.h"
 #include "debug.h"
@@ -38,31 +37,38 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     titleResource.LoadResources();
 
 # if 1
-	g_screen.updateInput = g_ScreenFuncs[SCREEN_OPENING].updateInput;
-    g_screen.update     = g_ScreenFuncs[SCREEN_OPENING].update;
-    g_screen.draw       = g_ScreenFuncs[SCREEN_OPENING].draw;
-    g_screen.nextUpdate = NULL;
-    g_screen.nextDraw   = NULL;
+    g_screen.updateInput     = g_ScreenFuncs[SCREEN_OPENING].updateInput;
+    g_screen.update          = g_ScreenFuncs[SCREEN_OPENING].update;
+    g_screen.draw            = g_ScreenFuncs[SCREEN_OPENING].draw;
+    g_screen.nextUpdateInput = NULL;
+    g_screen.nextUpdate      = NULL;
+    g_screen.nextDraw        = NULL;
 #else
 
-    g_screen.update = UpdateDebugMenu;
-    g_screen.draw = DrawDebugMenu;
-    g_screen.nextUpdate = NULL;
-    g_screen.nextDraw = NULL;
+    g_screen.updateInput     = UpdateDebugRawInput;
+    g_screen.update          = UpdateDebugMenu;
+    g_screen.draw            = DrawDebugMenu;
+    g_screen.nextUpdateInput = NULL;
+    g_screen.nextUpdate      = NULL;
+    g_screen.nextDraw        = NULL;
 #endif
 
     while (ProcessMessage() == SUCCESS) {
         ClearDrawScreen();
 
-        UpdateInput();
+        if (g_screen.updateInput != NULL) {
+            g_screen.updateInput();
+        }
         g_screen.update();
         g_screen.draw();
 
         if (g_screen.nextUpdate != NULL) {
-            g_screen.update     = g_screen.nextUpdate;
-            g_screen.draw       = g_screen.nextDraw;
-            g_screen.nextUpdate = NULL;
-            g_screen.nextDraw   = NULL;
+            g_screen.updateInput     = g_screen.nextUpdateInput;
+            g_screen.update          = g_screen.nextUpdate;
+            g_screen.draw            = g_screen.nextDraw;
+            g_screen.nextUpdateInput = NULL;
+            g_screen.nextUpdate      = NULL;
+            g_screen.nextDraw        = NULL;
         }
 
         ScreenFlip();
@@ -73,8 +79,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     return 0;
 }
 
-// É}Å[ÉWÉeÉXÉg1 main
+// ÔøΩ}ÔøΩ[ÔøΩWÔøΩeÔøΩXÔøΩg1 main
 
-// É}Å[ÉWÉeÉXÉg2 main
+// ÔøΩ}ÔøΩ[ÔøΩWÔøΩeÔøΩXÔøΩg2 main
 
-// É}Å[ÉWÉeÉXÉg3 main
+// ÔøΩ}ÔøΩ[ÔøΩWÔøΩeÔøΩXÔøΩg3 main

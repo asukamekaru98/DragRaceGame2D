@@ -1,7 +1,7 @@
 #include "../DxLib/DxLib.h"
 #include "share.h"
 #include "screen_manager.h"
-#include "input.h"
+#include "input/debug_input.h"
 #include "debug.h"
 #include "title.h"
 #include "car_data.h"
@@ -10,6 +10,13 @@
 
 #ifdef _DEBUG
 
+// Raw key input shared by the debug menu / draw sample / input sample screens
+static DebugRawInput s_rawInput;
+
+void UpdateDebugRawInput(void) {
+    s_rawInput.Update();
+}
+
 // ─────────────────────────────────────────
 // Debug Menu
 // ─────────────────────────────────────────
@@ -17,18 +24,26 @@
 static int s_debugMenuIndex = 0;
 
 void UpdateDebugMenu(void) {
-    if (IsKeyTriggered(KEY_INPUT_UP)) {
+    static int s_initialized = 0;
+    if (!s_initialized) {
+        s_rawInput.Update();   // re-sync: suppress false triggers from keys held across screens
+        s_initialized = 1;
+    }
+
+    if (s_rawInput.IsKeyTriggered(KEY_INPUT_UP)) {
         s_debugMenuIndex = (s_debugMenuIndex - 1 + 2) % 2;
     }
-    if (IsKeyTriggered(KEY_INPUT_DOWN)) {
+    if (s_rawInput.IsKeyTriggered(KEY_INPUT_DOWN)) {
         s_debugMenuIndex = (s_debugMenuIndex + 1) % 2;
     }
-    if (IsKeyTriggered(KEY_INPUT_Z) || IsKeyTriggered(KEY_INPUT_RETURN)) {
-        if (s_debugMenuIndex == 0) ChangeScreen(UpdateDebugDraw,  DrawDebugDraw);
-        else                       ChangeScreen(UpdateDebugInput, DrawDebugInput);
+    if (s_rawInput.IsKeyTriggered(KEY_INPUT_Z) || s_rawInput.IsKeyTriggered(KEY_INPUT_RETURN)) {
+        s_initialized = 0;
+        if (s_debugMenuIndex == 0) ChangeScreen(UpdateDebugRawInput, UpdateDebugDraw,  DrawDebugDraw);
+        else                       ChangeScreen(UpdateDebugRawInput, UpdateDebugInput, DrawDebugInput);
     }
-    if (IsKeyTriggered(KEY_INPUT_ESCAPE)) {
-        ChangeScreen(UpdateTitle, DrawTitle);
+    if (s_rawInput.IsKeyTriggered(KEY_INPUT_ESCAPE)) {
+        s_initialized = 0;
+        ChangeScreen(UpdateTitleInput, UpdateTitle, DrawTitle);
     }
 }
 
@@ -185,14 +200,14 @@ static void DrawPageBlend(void) {
 }
 
 void UpdateDebugDraw(void) {
-    if (IsKeyTriggered(KEY_INPUT_LEFT)) {
+    if (s_rawInput.IsKeyTriggered(KEY_INPUT_LEFT)) {
         s_drawPage = (s_drawPage - 1 + DRAW_PAGE_COUNT) % DRAW_PAGE_COUNT;
     }
-    if (IsKeyTriggered(KEY_INPUT_RIGHT)) {
+    if (s_rawInput.IsKeyTriggered(KEY_INPUT_RIGHT)) {
         s_drawPage = (s_drawPage + 1) % DRAW_PAGE_COUNT;
     }
-    if (IsKeyTriggered(KEY_INPUT_ESCAPE)) {
-        ChangeScreen(UpdateDebugMenu, DrawDebugMenu);
+    if (s_rawInput.IsKeyTriggered(KEY_INPUT_ESCAPE)) {
+        ChangeScreen(UpdateDebugRawInput, UpdateDebugMenu, DrawDebugMenu);
     }
 }
 
@@ -254,14 +269,14 @@ static int s_lastKeyIndex = -1;
 
 void UpdateDebugInput(void) {
     for (int i = 0; i < KEY_LIST_COUNT; i++) {
-        if (IsKeyTriggered(KEY_LIST[i].keyCode)) {
+        if (s_rawInput.IsKeyTriggered(KEY_LIST[i].keyCode)) {
             s_lastKeyIndex = i;
         }
     }
     // ESC transitions back (captured after updating lastKey)
-    if (IsKeyTriggered(KEY_INPUT_ESCAPE)) {
+    if (s_rawInput.IsKeyTriggered(KEY_INPUT_ESCAPE)) {
         s_lastKeyIndex = -1;
-        ChangeScreen(UpdateDebugMenu, DrawDebugMenu);
+        ChangeScreen(UpdateDebugRawInput, UpdateDebugMenu, DrawDebugMenu);
     }
 }
 
@@ -274,7 +289,7 @@ void DrawDebugInput(void) {
     DrawString(30, 45, "Keyboard", Color(200, 200, 200).Code());
 
     for (int i = 0; i < KEY_LIST_COUNT; i++) {
-        int isOn = IsKeyPressed(KEY_LIST[i].keyCode);
+        int isOn = s_rawInput.IsKeyPressed(KEY_LIST[i].keyCode);
         int col  = isOn ? Color::YELLOW.Code() : Color(160, 160, 160).Code();
         DrawFormatString(30, 70 + i * 26, col, "%s : %s",
                          KEY_LIST[i].label, isOn ? "[ON] " : "[   ]");
@@ -338,6 +353,7 @@ static float s_rpm       = MTR_RPM_IDLE;   // target engine rpm
 static float s_needleRpm = MTR_RPM_IDLE;   // displayed rpm (after easing)
 static int   s_gear      = 1;
 static float s_speed     = 0.0f;
+static DebugInput s_meterInput;     // throttle / gear / car-select / reset / back
 
 static void ResetMeter(void) {
     s_rpm       = MTR_RPM_IDLE;
@@ -354,13 +370,21 @@ static void MeterPoint(int cx, int cy, float radius, float frac, int* ox, int* o
     *oy = cy - (int)(sinf(rad) * radius);   // minus: screen y grows downward
 }
 
+void UpdateDebugMeterInput(void) {
+    s_meterInput.Update();
+}
+
 void UpdateDebugMeter(void) {
-    if (!s_meterInit) { ResetMeter(); s_meterInit = 1; }
+    if (!s_meterInit) {
+        ResetMeter();
+        s_meterInput.Update();   // re-sync: suppress false triggers from keys held across screens
+        s_meterInit = 1;
+    }
 
     const CarData* car = &CAR_TABLE[s_meterCar];
 
     // Throttle (hold Z): rev up with a rev-limiter, else engine-brake down to idle
-    if (IsKeyPressed(KEY_INPUT_Z)) {
+    if (s_meterInput.IsAccel()) {
         s_rpm += car->acceleration * 40.0f;
         if (s_rpm > MTR_RPM_REDLINE) s_rpm = MTR_RPM_REDLINE;
     } else {
@@ -369,26 +393,27 @@ void UpdateDebugMeter(void) {
     }
 
     // Gear shift: upshift drops rpm, downshift raises it
-    if (IsKeyTriggered(KEY_INPUT_RIGHT) && s_gear < car->gearCount) {
+    if (s_meterInput.IsGearUpTriggered() && s_gear < car->gearCount) {
         s_gear++;
         s_rpm *= 0.6f;
         if (s_rpm < MTR_RPM_IDLE) s_rpm = MTR_RPM_IDLE;
     }
-    if (IsKeyTriggered(KEY_INPUT_LEFT) && s_gear > 1) {
+    if (s_meterInput.IsGearDownTriggered() && s_gear > 1) {
         s_gear--;
         s_rpm *= 1.5f;
         if (s_rpm > MTR_RPM_REDLINE) s_rpm = MTR_RPM_REDLINE;
     }
 
     // Switch test car with number keys 1..5
-    for (int i = 0; i < CAR_TABLE_COUNT && i < 5; i++) {
-        if (IsKeyTriggered(KEY_INPUT_1 + i)) {
-            s_meterCar = i;
+    {
+        int carSelect = s_meterInput.GetCarSelectTriggered();
+        if (carSelect >= 0 && carSelect < CAR_TABLE_COUNT) {
+            s_meterCar = carSelect;
             ResetMeter();
         }
     }
 
-    if (IsKeyTriggered(KEY_INPUT_R)) ResetMeter();
+    if (s_meterInput.IsResetTriggered()) ResetMeter();
 
     // Speed from rpm and current gear (top gear at redline ~ car maxSpeed)
     float gearTop = car->maxSpeed * ((float)s_gear / (float)car->gearCount);
@@ -399,9 +424,9 @@ void UpdateDebugMeter(void) {
     // Needle easing -- this is the animation being prototyped
     s_needleRpm += (s_rpm - s_needleRpm) * MTR_SMOOTH;
 
-    if (IsKeyTriggered(KEY_INPUT_ESCAPE)) {
+    if (s_meterInput.IsRetireTriggered()) {
         s_meterInit = 0;
-        ChangeScreen(UpdateTitle, DrawTitle);
+        ChangeScreen(UpdateTitleInput, UpdateTitle, DrawTitle);
     }
 }
 
@@ -472,7 +497,7 @@ void DrawDebugMeter(void) {
 
     DrawString(px2, py2 + 150, "THROTTLE", Color(150, 150, 160).Code());
     DrawFillBox(px2 + 90, py2 + 150, px2 + 112, py2 + 168,
-                IsKeyPressed(KEY_INPUT_Z) ? Color(0, 220, 0).Code() : Color(60, 60, 60).Code());
+                s_meterInput.IsAccel() ? Color(0, 220, 0).Code() : Color(60, 60, 60).Code());
 
     // speed bar
     int barX = px2, barY = py2 + 210, barW = 230, barH = 16;
