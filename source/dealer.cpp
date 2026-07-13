@@ -1,7 +1,7 @@
 #include "../DxLib/DxLib.h"
 #include "share.h"
 #include "screen_manager.h"
-#include "input.h"
+#include "input/dealer_input.h"
 #include "game_data.h"
 #include "car_data.h"
 #include "dealer.h"
@@ -39,6 +39,7 @@ static int          s_cursorPos  = 0;       // 0=Buy  1=Back
 static int          s_cantAfford = 0;       // flash timer for "cannot afford"
 static int          s_hBg        = -1;
 static int          s_hSprites[16];         // sprite handles per CAR_TABLE entry
+static DealerInput  s_input;
 
 // ── Helpers ──────────────────────────────────────────────────
 static int CanAfford(int idx) {
@@ -137,6 +138,10 @@ static void UnloadDealerResources(void) {
 }
 
 // ── Screen functions ──────────────────────────────────────────
+void UpdateDealerInput(void) {
+    s_input.Update();
+}
+
 void UpdateDealer(void) {
     static int s_initialized = 0;
     if (!s_initialized) {
@@ -147,6 +152,7 @@ void UpdateDealer(void) {
         s_cursorPos = 0;
         s_cantAfford = 0;
         LoadDealerResources();
+        s_input.Update();   // re-sync: suppress false triggers from keys held across screens
         s_initialized = 1;
     }
 
@@ -159,30 +165,30 @@ void UpdateDealer(void) {
     switch (s_state) {
 
     case DEALER_STATE_CARD:
-        if (IsKeyTriggered(KEY_INPUT_LEFT)) {
+        if (s_input.IsLeftTriggered()) {
             s_carIndex = (s_carIndex - 1 + CAR_TABLE_COUNT) % CAR_TABLE_COUNT;
             s_targetX  = -(float)(s_carIndex * CARD_STEP);
         }
-        if (IsKeyTriggered(KEY_INPUT_RIGHT)) {
+        if (s_input.IsRightTriggered()) {
             s_carIndex = (s_carIndex + 1) % CAR_TABLE_COUNT;
             s_targetX  = -(float)(s_carIndex * CARD_STEP);
         }
-        if (IsKeyTriggered(KEY_INPUT_Z) || IsKeyTriggered(KEY_INPUT_RETURN)) {
+        if (s_input.IsDecideTriggered()) {
             s_state     = DEALER_STATE_MENU;
             s_cursorPos = 0;
         }
-        if (IsKeyTriggered(KEY_INPUT_X) || IsKeyTriggered(KEY_INPUT_ESCAPE)) {
+        if (s_input.IsCancelTriggered()) {
             s_initialized = 0;
             UnloadDealerResources();
-            ChangeScreen(UpdateGarage, DrawGarage);
+            ChangeScreen(UpdateGarageInput, UpdateGarage, DrawGarage);
         }
         break;
 
     case DEALER_STATE_MENU:
-        if (IsKeyTriggered(KEY_INPUT_LEFT) || IsKeyTriggered(KEY_INPUT_RIGHT)) {
+        if (s_input.IsLeftTriggered() || s_input.IsRightTriggered()) {
             s_cursorPos = 1 - s_cursorPos;
         }
-        if (IsKeyTriggered(KEY_INPUT_Z) || IsKeyTriggered(KEY_INPUT_RETURN)) {
+        if (s_input.IsDecideTriggered()) {
             if (s_cursorPos == 0) {
                 // Buy
                 if (AlreadyOwned(s_carIndex)) {
@@ -192,7 +198,7 @@ void UpdateDealer(void) {
                     BuyCar(s_carIndex);
                     s_initialized = 0;
                     UnloadDealerResources();
-                    ChangeScreen(UpdateGarage, DrawGarage);
+                    ChangeScreen(UpdateGarageInput, UpdateGarage, DrawGarage);
                 } else {
                     s_cantAfford = 90;   // flash for ~1.5s
                 }
@@ -201,7 +207,7 @@ void UpdateDealer(void) {
                 s_state = DEALER_STATE_CARD;
             }
         }
-        if (IsKeyTriggered(KEY_INPUT_X) || IsKeyTriggered(KEY_INPUT_ESCAPE)) {
+        if (s_input.IsCancelTriggered()) {
             s_state = DEALER_STATE_CARD;
         }
         break;

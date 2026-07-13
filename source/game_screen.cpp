@@ -1,7 +1,6 @@
 #include "../DxLib/DxLib.h"
 #include "share.h"
 #include "screen_manager.h"
-#include "input.h"
 #include "game_screen.h"
 #include "game_data.h"
 #include "result.h"
@@ -24,7 +23,7 @@ void UpdateGame(void) {
         g_gameData.lastTime = 12.34f;
 
         s_initialized = 0;
-        ChangeScreen(UpdateResult, DrawResult);
+        ChangeScreen(UpdateResultInput, UpdateResult, DrawResult);
     }
 }
 

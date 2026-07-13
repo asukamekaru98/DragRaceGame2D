@@ -1,6 +1,5 @@
 #include "../DxLib/DxLib.h"
 #include "screen_manager.h"
-#include "input.h"
 #include "title_resource.h"
 #include "opening.h"
 #include "title.h"
@@ -26,7 +25,7 @@ void UpdateOpening(void) {
     if (s_logoAlpha >= 255) {
         s_logoAlpha   = 255;
         s_initialized = 0;
-        ChangeScreen(UpdateTitle, DrawTitle);
+        ChangeScreen(UpdateTitleInput, UpdateTitle, DrawTitle);
     }
 }
 

@@ -4,7 +4,6 @@
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\a.cpp" />
     <ClCompile Include="source\screen_manager.cpp" />
-    <ClCompile Include="source\input.cpp" />
     <ClCompile Include="source\title_resource.cpp" />
     <ClCompile Include="source\opening.cpp" />
     <ClCompile Include="source\title.cpp" />
@@ -25,12 +24,16 @@
     <ClCompile Include="source\car_meter\carMeter.cpp" />
     <ClCompile Include="source\input\key_input.cpp" />
     <ClCompile Include="source\input\debug_input.cpp" />
+    <ClCompile Include="source\input\title_input.cpp" />
+    <ClCompile Include="source\input\garage_input.cpp" />
+    <ClCompile Include="source\input\dealer_input.cpp" />
+    <ClCompile Include="source\input\customize_input.cpp" />
+    <ClCompile Include="source\input\result_input.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\main.h" />
     <ClInclude Include="source\typedef.h" />
     <ClInclude Include="source\screen_manager.h" />
-    <ClInclude Include="source\input.h" />
     <ClInclude Include="source\title_resource.h" />
     <ClInclude Include="source\opening.h" />
     <ClInclude Include="source\title.h" />
@@ -52,5 +55,10 @@
     <ClInclude Include="source\car_meter\gauge_base.h" />
     <ClInclude Include="source\input\key_input.h" />
     <ClInclude Include="source\input\debug_input.h" />
+    <ClInclude Include="source\input\title_input.h" />
+    <ClInclude Include="source\input\garage_input.h" />
+    <ClInclude Include="source\input\dealer_input.h" />
+    <ClInclude Include="source\input\customize_input.h" />
+    <ClInclude Include="source\input\result_input.h" />
   </ItemGroup>
 </Project>

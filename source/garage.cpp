@@ -1,7 +1,7 @@
 #include "../DxLib/DxLib.h"
 #include "share.h"
 #include "screen_manager.h"
-#include "input.h"
+#include "input/garage_input.h"
 #include "game_data.h"
 #include "garage.h"
 #include "dealer.h"
@@ -42,6 +42,7 @@ static const int BG_COLORS[GARAGE_MENU_COUNT][3] = {
 // ── State ────────────────────────────────────────────────────
 static int s_menuIndex = GARAGE_MENU_CUSTOM;
 static int s_carIndex  = 0;
+static GarageInput s_input;
 
 // Loaded image handles (-1 = not loaded / placeholder)
 static int s_hBgDealer  = -1;
@@ -94,41 +95,46 @@ static void DrawCarSprite(int hSprite, int x, int y, int w, int h, const char* n
 }
 
 // ── Screen functions ──────────────────────────────────────────
+void UpdateGarageInput(void) {
+    s_input.Update();
+}
+
 void UpdateGarage(void) {
     static int s_initialized = 0;
     if (!s_initialized) {
         s_menuIndex   = GARAGE_MENU_CUSTOM;
         s_carIndex    = 0;
         LoadGarageResources();
+        s_input.Update();   // re-sync: suppress false triggers from keys held across screens
         s_initialized = 1;
     }
 
     // Vertical: menu selection
-    if (IsKeyTriggered(KEY_INPUT_UP)) {
+    if (s_input.IsMenuUpTriggered()) {
         s_menuIndex = (s_menuIndex - 1 + GARAGE_MENU_COUNT) % GARAGE_MENU_COUNT;
     }
-    if (IsKeyTriggered(KEY_INPUT_DOWN)) {
+    if (s_input.IsMenuDownTriggered()) {
         s_menuIndex = (s_menuIndex + 1) % GARAGE_MENU_COUNT;
     }
 
     // Horizontal: car selection (only when 2+ cars owned)
     if (g_gameData.carCount > 1) {
-        if (IsKeyTriggered(KEY_INPUT_LEFT)) {
+        if (s_input.IsCarPrevTriggered()) {
             s_carIndex = (s_carIndex - 1 + g_gameData.carCount) % g_gameData.carCount;
         }
-        if (IsKeyTriggered(KEY_INPUT_RIGHT)) {
+        if (s_input.IsCarNextTriggered()) {
             s_carIndex = (s_carIndex + 1) % g_gameData.carCount;
         }
     }
 
     // Confirm
-    if (IsKeyTriggered(KEY_INPUT_Z) || IsKeyTriggered(KEY_INPUT_RETURN)) {
+    if (s_input.IsDecideTriggered()) {
         g_gameData.selectedCarIndex = s_carIndex;
         s_initialized = 0;  // reset on next entry
         switch (s_menuIndex) {
-        case GARAGE_MENU_DEALER: ChangeScreen(UpdateDealer,   DrawDealer);   break;
-        case GARAGE_MENU_CUSTOM: ChangeScreen(UpdateCustomize, DrawCustomize); break;
-        case GARAGE_MENU_RACE:   ChangeScreen(UpdateGame,      DrawGame);     break;
+        case GARAGE_MENU_DEALER: ChangeScreen(UpdateDealerInput,    UpdateDealer,    DrawDealer);    break;
+        case GARAGE_MENU_CUSTOM: ChangeScreen(UpdateCustomizeInput, UpdateCustomize, DrawCustomize); break;
+        case GARAGE_MENU_RACE:   ChangeScreen(NULL,                 UpdateGame,      DrawGame);      break;
         }
     }
 }
