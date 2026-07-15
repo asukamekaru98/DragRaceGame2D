@@ -1,75 +1,60 @@
+# エンジン・メーター・データ層クラス図(実装リバース)
+
+実装元: `source/car_engine/`、`source/car_meter/`、`source/car_data.h`、`source/parts_data.h`。
+
+実装状況メモ:
+
+- `CarEngine` はスケルトン。`Update()` は中身が空で、引数の入力クラス(構想上の `GameKeyInput`)はコメントアウト中。`GetData()` はメンバをそのまま詰めて返すのみ
+- `GaugeBase` は純粋仮想3メソッドの抽象基底として実装済み(処理実体はまだない)
+- `CarMeter` は空クラスが2重定義されている: `car_meter.h` の `CarMeter`(GaugeBase を継承していない)と `carMeter.cpp` 内の `CarMeter : public GaugeBase`。統合が必要
+- `TurboGauge` / `OilTempGauge` は未実装(構想のみ)
+- メーターの針アニメーション等の実挙動は `debug.cpp` のデバッグメーター画面に手続き型でプロトタイプ実装されている(クラス化は未着手)
+
 ```mermaid
 classDiagram
     %% ===== エンジン層 =====
     class CarEngineData {
         <<struct>>
-        +rpm F_4
-        +speed F_4
-        +gear SI_4
-        +boostPressure F_4
-        +isBraking bool
+        +fRpm float
+        +fSpeed float
+        +iGear int
+        +fBoostPressure float
+        +bIsBraking bool
     }
 
     class CarEngine {
-        -rpm_ F_4
-        -speed_ F_4
-        -gear_ SI_4
-        -boostPressure_ F_4
+        <<スケルトン>>
+        -fRPM_ float
+        -fSpeed_ float
+        -iGear_ int
+        -fBoostPressure_ float
         -carData_ CarData
-        -equippedParts_ SI_4[]
-        +Update(input GameKeyInput) void
+        -iEquippedParts_ int[]
+        +Update() void
         +GetData() CarEngineData
     }
 
     CarEngine ..> CarData       : uses
-    CarEngine ..> PartsData     : tuned by
     CarEngine ..> CarEngineData : outputs
-    CarEngine ..> GameKeyInput  : reads
-
-    %% ===== 入力層 =====
-
-    class GameKeyInput {
-        -isAccel_ bool
-        -isGearUpTriggered_ bool
-        -isGearDownTriggered_ bool
-        -isRetireTriggered_ bool
-        +Update() void
-        +IsAccel() bool
-        +IsGearUpTriggered() bool
-        +IsGearDownTriggered() bool
-        +IsRetireTriggered() bool
-    }
-
-    KeyInput <|-- GameKeyInput
 
     %% ===== メーター層 =====
     class GaugeBase {
         <<abstract>>
-        +Update(data CarEngineData) void*
-        +Draw() void*
-        +PlayOpening() void*
+        +Update(data CarEngineData)* void
+        +Draw()* void
+        +PlayOpening()* void
     }
 
     class CarMeter {
-        -needleAngleRpm F_4
-        -needleAngleSpeed F_4
-        +Update(data CarEngineData) void
-        +Draw() void
-        +PlayOpening() void
+        <<スケルトン・2重定義あり>>
     }
 
     class TurboGauge {
-        -needleAngle F_4
-        +Update(data CarEngineData) void
-        +Draw() void
-        +PlayOpening() void
+        <<未実装・構想>>
     }
 
     class OilTempGauge {
-        -needleAngle F_4
-        +Update(data CarEngineData) void
-        +Draw() void
-        +PlayOpening() void
+        <<未実装・構想>>
     }
 
     GaugeBase <|-- CarMeter
@@ -80,21 +65,21 @@ classDiagram
     %% ===== データ層 =====
     class CarData {
         <<struct>>
-        +name string
-        +maxSpeed F_4
-        +acceleration F_4
-        +gearCount SI_4
-        +price SI_4
+        +name char*
+        +maxSpeed float
+        +acceleration float
+        +gearCount int
+        +price int
     }
 
     class PartsData {
         <<struct>>
-        +name string
-        +category PARTS_CATEGORY
-        +gaugeType GAUGE_TYPE
-        +price SI_4
-        +maxSpeedBonus F_4
-        +accelBonus F_4
+        +pName char*
+        +eCategory PARTS_CATEGORY
+        +eGaugeType GAUGE_TYPE
+        +iPrice int
+        +fMaxSpeedBonus float
+        +fAccelBonus float
     }
 
     class GAUGE_TYPE {
@@ -110,9 +95,14 @@ classDiagram
         PARTS_CAT_TIRE
         PARTS_CAT_BODY
         PARTS_CAT_EXTERIOR
+        PARTS_CAT_COUNT
     }
 
     PartsData --> GAUGE_TYPE
     PartsData --> PARTS_CATEGORY
-
 ```
+
+マスターデータ(グローバル定数):
+
+- `CAR_TABLE[]` / `CAR_TABLE_COUNT` — 車両マスタ(`car_data.cpp`)
+- `PARTS_TABLE[]` / `PARTS_TABLE_COUNT` — パーツマスタ(`parts_data.cpp`)
