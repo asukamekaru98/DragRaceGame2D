@@ -125,11 +125,19 @@ classDiagram
     }
 
     class CarMeter {
-        <<スケルトン・2重定義あり>>
+        -fNeedleRpm_ float
+        -fRpm_ float
+        -fSpeed_ float
+        -iGear_ int
+        +Update(data CarEngineData) void
+        +Draw() void
+        +PlayOpening() void
+        +Reset() void
     }
 
     GaugeBase <|-- CarMeter
     GaugeBase ..> CarEngineData : reads
+    CarMeter ..> CarEngineData : reads
 
     %% ===== データ層 =====
     class CarData {

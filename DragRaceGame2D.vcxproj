@@ -129,7 +129,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\car_engine\car_engine.cpp" />
-    <ClCompile Include="source\car_meter\carMeter.cpp" />
     <ClCompile Include="source\car_meter\car_meter.cpp" />
     <ClCompile Include="source\car_meter\gauge_base.cpp" />
     <ClCompile Include="source\input\customize_input.cpp" />
@@ -140,7 +139,6 @@
     <ClCompile Include="source\input\result_input.cpp" />
     <ClCompile Include="source\input\title_input.cpp" />
     <ClCompile Include="source\main.cpp" />
-    <ClCompile Include="source\a.cpp" />
     <ClCompile Include="source\manager\resourceManager.cpp" />
     <ClCompile Include="source\screen_manager.cpp" />
     <ClCompile Include="source\share.cpp" />
