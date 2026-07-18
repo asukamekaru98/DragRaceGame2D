@@ -3,8 +3,8 @@
 実装元: `source/input/` 配下。抽象基底 `KeyInput` を各画面専用の派生クラスが継承する。
 
 - 各画面の .cpp が static インスタンスを持ち、`UpdateXxxInput()` 経由でメインループから毎フレーム `Update()` が呼ばれる
-- `DebugInput` / `DebugRawInput` / `DebugMeterInput` は `_DEBUG` ビルド限定
-- `DebugMeterInput` はクラス定義・実装はあるが現状未使用(メーター画面は `DebugInput` を使用)
+- `DebugMeterInput` / `DebugRawInput` は `_DEBUG` ビルド限定
+- `DebugMeterInput` はメーター確認画面(F2)の入力(スロットル/ギア/テスト車種選択/リセット/戻る)。`DebugRawInput` は生キーを公開し、デバッグサンプル3画面(メニュー/描画/入力)で共用
 - UML構想上の `GameKeyInput`(ゲーム画面用)は未実装
 
 ```mermaid
@@ -77,7 +77,7 @@ classDiagram
         +IsAnyInputPressed() bool
     }
 
-    class DebugInput {
+    class DebugMeterInput {
         <<_DEBUG限定>>
         -bIsAccel_ bool
         -bIsGearUpTriggered_ bool
@@ -101,31 +101,6 @@ classDiagram
         +IsKeyTriggered(iKeyCode int) bool
     }
 
-    class DebugMeterInput {
-        <<_DEBUG限定・未使用>>
-        -bIsAccel_ bool
-        -bIsGearUpTriggered_ bool
-        -bIsGearDownTriggered_ bool
-        -bIsRetireTriggered_ bool
-        -bIsResetTriggered_ bool
-        -bCarSelect1Triggered_ bool
-        -bCarSelect2Triggered_ bool
-        -bCarSelect3Triggered_ bool
-        -bCarSelect4Triggered_ bool
-        -bCarSelect5Triggered_ bool
-        +Update() void
-        +IsAccel() bool
-        +IsGearUpTriggered() bool
-        +IsGearDownTriggered() bool
-        +IsRetireTriggered() bool
-        +IsResetTriggered() bool
-        +IsCarSelect1Triggered() bool
-        +IsCarSelect2Triggered() bool
-        +IsCarSelect3Triggered() bool
-        +IsCarSelect4Triggered() bool
-        +IsCarSelect5Triggered() bool
-    }
-
     class GameKeyInput {
         <<未実装・構想>>
         -isAccel_ bool
@@ -144,8 +119,7 @@ classDiagram
     KeyInput <|-- DealerInput
     KeyInput <|-- CustomizeInput
     KeyInput <|-- ResultInput
-    KeyInput <|-- DebugInput
-    KeyInput <|-- DebugRawInput
     KeyInput <|-- DebugMeterInput
+    KeyInput <|-- DebugRawInput
     KeyInput <|-- GameKeyInput
 ```

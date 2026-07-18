@@ -68,14 +68,11 @@ classDiagram
     class DealerInput
     class CustomizeInput
     class ResultInput
-    class DebugInput {
+    class DebugMeterInput {
         <<_DEBUG限定>>
     }
     class DebugRawInput {
         <<_DEBUG限定>>
-    }
-    class DebugMeterInput {
-        <<_DEBUG限定・未使用>>
     }
     class GameKeyInput {
         <<未実装・構想>>
@@ -86,9 +83,8 @@ classDiagram
     KeyInput <|-- DealerInput
     KeyInput <|-- CustomizeInput
     KeyInput <|-- ResultInput
-    KeyInput <|-- DebugInput
-    KeyInput <|-- DebugRawInput
     KeyInput <|-- DebugMeterInput
+    KeyInput <|-- DebugRawInput
     KeyInput <|-- GameKeyInput
 
     %% ===== エンジン層(source/car_engine/) =====

@@ -2,6 +2,7 @@
 #include "share.h"
 #include "screen_manager.h"
 #include "input/debug_input.h"
+#include "input/debug_meter_input.h"
 #include "debug.h"
 #include "title.h"
 #include "car_data.h"
@@ -354,7 +355,7 @@ static int   s_meterCar  = 0;       // test car index into CAR_TABLE
 static float s_rpm       = MTR_RPM_IDLE;   // target engine rpm
 static int   s_gear      = 1;
 static float s_speed     = 0.0f;
-static DebugInput s_meterInput;     // throttle / gear / car-select / reset / back
+static DebugMeterInput s_meterInput;  // throttle / gear / car-select / reset / back
 static CarMeter   s_meter;          // gauge under test (owns needle easing + drawing)
 
 static void ResetMeter(void) {

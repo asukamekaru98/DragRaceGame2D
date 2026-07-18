@@ -4,6 +4,10 @@
 
 #include "key_input.h"
 
+#define DEBUG_METER_CAR_SELECT_COUNT 5
+
+// Key input for the debug car-meter screen (F2):
+// throttle / gear shift / test-car select (1-5) / reset / back.
 class DebugMeterInput :public KeyInput {
 private:
 	bool bIsAccel_;
@@ -11,11 +15,7 @@ private:
 	bool bIsGearDownTriggered_;
 	bool bIsRetireTriggered_;
 	bool bIsResetTriggered_;
-	bool bCarSelect1Triggered_;
-	bool bCarSelect2Triggered_;
-	bool bCarSelect3Triggered_;
-	bool bCarSelect4Triggered_;
-	bool bCarSelect5Triggered_;
+	int  iCarSelectTriggered_;	// 0..4 when a number key (1-5) is triggered, -1 otherwise
 
 public:
 	DebugMeterInput();
@@ -25,11 +25,7 @@ public:
 	bool IsGearDownTriggered() const;
 	bool IsRetireTriggered() const;
 	bool IsResetTriggered() const;
-	bool IsCarSelect1Triggered() const;
-	bool IsCarSelect2Triggered() const;
-	bool IsCarSelect3Triggered() const;
-	bool IsCarSelect4Triggered() const;
-	bool IsCarSelect5Triggered() const;
+	int  GetCarSelectTriggered() const;
 };
 
 #endif // _DEBUG

@@ -44,7 +44,7 @@ msbuild DragRaceGame2D.sln /p:Configuration=Debug /p:Platform=x64
 ### 入力処理(クラス型に統一済み)
 
 - 抽象基底 `source/input/key_input.h` — `KeyInput`(`RefreshKeyState` / `IsPressed` / `IsTriggered` は protected)。派生クラスが `Update()` で意味付けフラグを更新し、const getter を公開する
-- 画面ごとの派生クラス(source/input/ 配下): `TitleInput` / `GarageInput` / `DealerInput` / `CustomizeInput` / `ResultInput`。デバッグ用に `DebugInput`(メーター画面)と `DebugRawInput`(生キー公開、デバッグサンプル3画面共用)
+- 画面ごとの派生クラス(source/input/ 配下): `TitleInput` / `GarageInput` / `DealerInput` / `CustomizeInput` / `ResultInput`。デバッグ用に `DebugMeterInput`(メーター画面)と `DebugRawInput`(生キー公開、デバッグサンプル3画面共用)
 - 各画面 .cpp が static インスタンスと `UpdateXxxInput()` を持ち、メインループから `g_screen.updateInput()` 経由で毎フレーム呼ばれる
 - 画面突入時の init ブロックで `s_input.Update()` をもう一度呼んでいる — 画面をまたいで押しっぱなしのキーがトリガー誤発火するのを防ぐため。削除しないこと
 - 旧手続き型 `input.cpp`/`input.h` は削除済み。UML上の `GameKeyInput` はゲーム画面のレースロジック実装時に追加予定(未実装)
