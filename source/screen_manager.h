@@ -1,8 +1,5 @@
 #pragma once
 
-typedef void (*UpdateInputFunc)(void);
-typedef void (*UpdateFunc)(void);
-typedef void (*DrawFunc)(void);
 
 typedef struct {
 	UpdateInputFunc updateInput;
@@ -41,3 +38,14 @@ typedef struct {
 extern SCREEN_FUNCTIONS g_ScreenFuncs[SCREEN_COUNT];
 
 void ChangeScreen(UpdateInputFunc updateInput, UpdateFunc update, DrawFunc draw);
+
+
+class ScreenManager {
+protected:
+	void UpdateInputFunc(void);
+	void UpdateFunc(void);
+	void DrawFunc(void);
+
+public:
+
+};

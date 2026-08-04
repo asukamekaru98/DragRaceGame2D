@@ -18,12 +18,16 @@ void DebugMeterInput::Update()
 {
 	RefreshKeyState();
 
+
 	// spec/detail_design_debug.md 5.2
 	bIsAccel_             = IsPressed(KEY_INPUT_Z);
 	bIsGearUpTriggered_   = IsTriggered(KEY_INPUT_RIGHT);
 	bIsGearDownTriggered_ = IsTriggered(KEY_INPUT_LEFT);
 	bIsRetireTriggered_   = IsTriggered(KEY_INPUT_ESCAPE);
 	bIsResetTriggered_    = IsTriggered(KEY_INPUT_R);
+
+
+
 
 	static const int CAR_SELECT_KEYS[DEBUG_METER_CAR_SELECT_COUNT] = {
 		KEY_INPUT_1, KEY_INPUT_2, KEY_INPUT_3, KEY_INPUT_4, KEY_INPUT_5,
