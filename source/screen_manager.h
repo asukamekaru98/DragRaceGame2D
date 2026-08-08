@@ -1,16 +1,23 @@
 #pragma once
 
 
-typedef struct {
-	UpdateInputFunc updateInput;
-	UpdateFunc update;
-	DrawFunc   draw;
-	UpdateInputFunc nextUpdateInput;
-	UpdateFunc nextUpdate;
-	DrawFunc   nextDraw;
-} ScreenManager;
+//typedef struct {
+//	UpdateInputFunc updateInput;
+//	UpdateFunc update;
+//	DrawFunc   draw;
+//	UpdateInputFunc nextUpdateInput;
+//	UpdateFunc nextUpdate;
+//	DrawFunc   nextDraw;
+//} ScreenManager;
 
-extern ScreenManager g_screen;
+//extern ScreenManager g_screen;
+
+typedef struct {
+	ScreenManager* screenManager;
+	ScreenManager* nextScreenManager;
+} ScreenManagerEx;
+
+extern ScreenManagerEx g_screenEx;
 
 typedef enum {
 	SCREEN_OPENING,
